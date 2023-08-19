@@ -30,6 +30,7 @@ View::composer(['*'], function ($view) {
     $categories = DB::table('categories')->get();
 
 
+
     $view->with([
         'categories' => $categories
     ]);

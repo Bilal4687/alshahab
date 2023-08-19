@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class WebsiteController extends Controller
 {
+
     public function Home()
     {
         $blog = DB::table('blogs')->get();
@@ -40,21 +41,46 @@ class WebsiteController extends Controller
     {
         $ids = $this->getCategoriesIds($slug);
 
+        $categories = DB::table('categories')->get()->toArray();
+
+        $categoryTree = $this->buildTree($categories);
+
         $products = DB::table('products')
         ->whereIn("category_id", $ids)->get();
-        // return $product;
-        return view('Website.Product', ['products' => $products]);
+        // return $products;
+        return view('Website.Product', ['products' => $products,'categoryTree' => $categoryTree,]);
     }
     function getCategoriesIds($slug){
+
         $category = DB::table('categories')->where('slug', $slug)->get();
+
         $categories = DB::table('categories')->where('parent_id', $category[0]->category_id)->get();
+
         $ids = array();
+
         array_push($ids, $category[0]->category_id);
         foreach($categories as $cat){
             array_push($ids, $cat->category_id);
         }
         return $ids;
     }
+
+    function buildTree(array $elements, $parentId = 0) {
+        $branch = array();
+
+        foreach ($elements as $element) {
+            if ($element->parent_id == $parentId) {
+                $children = $this->buildTree($elements, $element->category_id); // Use $this->buildTree
+                if ($children) {
+                    $element->children = $children;
+                }
+                $branch[] = $element;
+            }
+        }
+        return $branch;
+    }
+
+
     public function productdetails(Request $req, $slug)
     {
         $product = DB::table('products')->where('product_slug', $slug)->first();

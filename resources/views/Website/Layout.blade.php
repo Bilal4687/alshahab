@@ -130,23 +130,25 @@
                                 <a href="{{url('/')}}" class="stelina-menu-item-title" title="Home">Home</a>
                             </li>
                             @foreach ($categories as $category)
-                                @if($category->parent_id == 0)
-                                    <li class="menu-item menu-item-has-children">
-
-                                        <a href="{{url('result')}}/{{$category->slug}}" class="stelina-menu-item-title" title="Home">{{$category->category_name}}</a>
-                                        <span class="toggle-submenu"></span>
-                                        {{-- <ul class="submenu">
-                                            @foreach ($subcategories as $subcategory)
-                                                @if ($subcategory->category_id == $category->category_id)
-                                                    <li class="menu-item">
-                                                        <a href="{{url('result')}}/{{$category->slug}}/{{$subcategory->categories_sub_slug}}">{{$subcategory->categories_sub_name}}</a>
-                                                    </li>
+                            @if ($category->parent_id == 0)
+                                <li class="menu-item menu-item-has-children">
+                                    <a href="{{ url('result') }}/{{ $category->slug }}" class="stelina-menu-item-title" title="Home">{{ $category->category_name }}</a>
+                                    <span class="toggle-submenu"></span>
+                                    <ul>
+                                        @foreach ($categoryTree as $category)
+                                            <li>
+                                                {{ $category->category_name }}
+                                                @if (isset($category->children))
+                                                    @include('partials.subcategories', ['subcategories' => $category->children])
                                                 @endif
-                                            @endforeach
-                                        </ul> --}}
-                                    </li>
-                                @endif
-                            @endforeach
+                                            </li>
+                                        @endforeach
+                                    </ul>
+
+                                </li>
+                            @endif
+                        @endforeach
+
                         </ul>
                     </div>
                 </div>
@@ -408,6 +410,6 @@
 <script src="{{url('public/assets/js/lightbox.min.js')}}"></script>
 <script src="{{url('public/assets/js/owl.thumbs.min.js')}}"></script>
 <script src="{{url('public/assets/js/jquery.scrollbar.min.js')}}"></script>
-<script src="{{url('public/assets/js/frontend-plugin.js')}}"></script>
+{{-- <script src="{{url('public/assets/js/frontend-plugin.js')}}"></script> --}}
 </body>
 </html>

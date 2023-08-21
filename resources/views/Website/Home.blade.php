@@ -1,5 +1,6 @@
 @extends('Website.Layout')
 @section('content')
+
 <div class="">
     <div class="fullwidth-template">
         <div class="home-slider fullwidth rows-space-60">

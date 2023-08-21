@@ -190,7 +190,12 @@
                                             <a href="#" class="btn-number qtyplus quantity-plus">+</a>
                                         </div>
                                     </div>
-                                    <button class="single_add_to_cart_button button">Add to cart</button>
+                                    <form id="addToCart">
+                                        @csrf
+                                        <input type="hidden" id="product_id", name="product_id" value="{{ $productdetail->product_id }}">
+                                        <button type="button" id="btnAddToCart" class="single_add_to_cart_button button" onclick="AddToCart()">Add to cart</button>
+                                        <button type="button" class="single_add_to_cart_button button">Buy Now</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -326,73 +331,98 @@
                             </div>
                         </div>
                     </div>
-
                     {{-- You May also Like --}}
                     <div style="clear: left;"></div>
-                    <div class="related products product-grid">
-                        <h2 class="product-grid-title">You may also like</h2>
-                        <div class="owl-products owl-slick equal-container nav-center"  data-slick ='{"autoplay":false, "autoplaySpeed":1000, "arrows":true, "dots":false, "infinite":true, "speed":800, "rows":1}' data-responsive='[{"breakpoint":"2000","settings":{"slidesToShow":3}},{"breakpoint":"1200","settings":{"slidesToShow":2}},{"breakpoint":"992","settings":{"slidesToShow":2}},{"breakpoint":"480","settings":{"slidesToShow":1}}]'>
-                           @foreach ($relatedproduct as $related)
-                                <div class="product-item style-1">
-                                    <div class="product-inner equal-element">
-                                        <div class="product-top">
-                                            <div class="flash">
-                                                <span class="onnew">
-                                                    <span class="text"> new </span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="product-thumb">
-                                            <div class="thumb-inner">
-                                                <a href="{{url('ProductDtails')}}/{{$related->product_slug ?? ''}}">
-                                                    <img src="{{config('global.main_url')}}/public/Files/Products/{{$related->product_thumbnail}}" alt="img">
-                                                </a>
-                                                <div class="thumb-group">
-                                                    <div class="yith-wcwl-add-to-wishlist">
-                                                        <div class="yith-wcwl-add-button">
-                                                            <a href="#">Add to Wishlist</a>
-                                                        </div>
-                                                    </div>
-                                                    <a href="#" class="button quick-wiew-button">Quick View</a>
-                                                    <div class="loop-form-add-to-cart">
-                                                        <button class="single_add_to_cart_button button">Add to cart
-                                                        </button>
-                                                    </div>
+                    <h2 class="product-grid-title">You may also like</h2>
+                    <ul class="row list-products auto-clear equal-container product-grid">
+                        @foreach ($relatedproduct as $related)
+                         <li class="product-item product-type-variable col-lg-3 col-md-4 col-sm-6 col-xs-6 col-ts-12 style-1">
+                            <div class="product-inner equal-element">
+                                <div class="product-top">
+                                </div>
+                                <div class="product-thumb">
+                                    <div class="thumb-inner">
+                                        <a href="{{url('ProductDtails')}}/{{$related->product_slug ?? ''}}">
+                                            <img src="{{config('global.main_url')}}/public/Files/Products/{{$related->product_thumbnail}}" alt="img">
+                                        </a>
+                                        <div class="thumb-group">
+                                            <div class="yith-wcwl-add-to-wishlist">
+                                                <div class="yith-wcwl-add-button">
+                                                    <a href="#">Add to Wishlist</a>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="product-info">
-                                            <h5 class="product-name product_title">
-                                                <a href="#">{{$related->product_name}}</a>
-                                            </h5>
-                                            <div class="group-info">
-                                                <div class="stars-rating">
-                                                    <div class="star-rating">
-                                                        <span class="star-3"></span>
-                                                    </div>
-                                                    <div class="count-star">
-                                                        (3)
-                                                    </div>
-                                                </div>
-                                                <div class="price">
-                                                    <del>
-                                                        {{$related->pricing[0]->mrp_price ?? ''}}
-                                                    </del>
-                                                    <ins>
-                                                        {{$related->pricing[0]->sale_price ?? ''}}
-                                                    </ins>
-                                                </div>
+                                            <a href="#" class="button quick-wiew-button">Quick View</a>
+                                            <div class="loop-form-add-to-cart">
+                                                <button class="single_add_to_cart_button button">Add to cart
+                                                </button>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
-                           @endforeach
-                        </div>
-                    </div>
+                                <div class="product-info">
+                                    <h5 class="product-name product_title">
+                                        <a href="#">{{$related->product_name}}</a>
+                                    </h5>
+                                    <div class="group-info">
+                                        <div class="stars-rating">
+                                            <div class="star-rating">
+                                                <span class="star-3"></span>
+                                            </div>
+                                            <div class="count-star">
+                                                (3)
+                                            </div>
+                                        </div>
+                                        <div class="price">
+                                            <del>
+                                                {{$related->pricing[0]->mrp_price ?? ''}}
+                                            </del>
+                                            <ins>
+                                                {{$related->pricing[0]->sale_price ?? ''}}
+                                            </ins>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        @endforeach
+                    </ul>
+                    {{-- You May also Like --}}
+
 
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+            function AddToCart() {
+
+            $("#btnAddToCart").prop("disabled", true);
+            $.post("{{ route('AddToCart') }}", $('#addToCart').serialize())
+                .done((res) => {
+                    $("#btnAddToCart").prop("disabled", false);
+                    if (res.success) {
+                        // Increment and update the cart count dynamically
+                            var cartCountElement = document.getElementById('cart-count');
+                            var currentCartCount = parseInt(cartCountElement.innerText);
+                            var newCartCount = currentCartCount + 1;
+                            cartCountElement.innerText = newCartCount;
+
+                            // Add the highlighted effect to the cart option
+                            $('#cart-link').addClass('highlighted-cart');
+
+                            // Scroll to the cart count for visual feedback
+                            $('html, body').animate({
+                                scrollTop: $('#cart-count').offset().top
+                            }, 1000);
+                    }else {
+                        window.location.href = "{{ url('/Login') }}";
+                    }
+                })
+    //             var cartCountElement = document.getElementById('cart-count');
+    // var currentCartCount = parseInt(cartCountElement.innerText);
+    // cartCountElement.innerText = currentCartCount + 1;
+}
+</script>
 @endsection

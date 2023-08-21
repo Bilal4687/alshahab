@@ -14,6 +14,7 @@ use App\Http\Controllers\VariationController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Website\WebsiteController;
 use App\Http\Controllers\Website\MyAccount\MyAccountController;
+use App\Http\Controllers\Website\Cart\CartController;
 use Illuminate\Support\Facades\DB;
 /*
 |--------------------------------------------------------------------------
@@ -37,15 +38,19 @@ View::composer(['*'], function ($view) {
 });
 
 Route::get('/', [WebsiteController::class, 'Home'])->name('Home');
-Route::get('/result/{slug}/{sub_slug?}', [WebsiteController::class, 'products'])->name('result');
-Route::get('/ProductDtails/{slug}', [WebsiteController::class, 'productdetails'])->name('productdetails');
+Route::get('/result/{slug}/', [WebsiteController::class, 'products'])->name('result');
+Route::get('/product/{productSlug}/', [WebsiteController::class, 'productdetails'])->name('product');
+Route::post('/AddToCart', [CartController::class, 'AddToCart'])->name('AddToCart');
+Route::get('/CartDetail', [CartController::class, 'CartDetail'])->name('CartDetail');
+// Route::get('/ProductDtails/{slug}', [WebsiteController::class, 'productdetails'])->name('productdetails');
 Route::get('/Login', [MyAccountController::class, 'Login'])->name('Login');
-
-Route::get('/Admin/Login', [AuthController::class, 'AdminLogin']);
+Route::get('/Signup', [MyAccountController::class, 'NewRegistration'])->name('Signup');
+Route::post('/CustomerLogin', [MyAccountController::class, 'CustomerLogin'])->name('CustomerLogin');
+Route::post('/AddNewCustomer', [MyAccountController::class, 'RegisterCustomer'])->name('AddNewCustomer');
+Route::get('Logout',[MyAccountController::class,'Logout'])->name('Logout');
 
 Route::prefix('Admin')->group(function () {
     Route::get('Dashboard', [AuthController::class, 'Dashboard'])->name('Dashboard');
-
     //Category Routes
     Route::get('Category', [CategoryController::class, 'Category'])->name('Category');
     Route::post('CategoryStore', [CategoryController::class, 'CategoryStore'])->name('CategoryStore');

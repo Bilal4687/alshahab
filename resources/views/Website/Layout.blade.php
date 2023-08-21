@@ -22,6 +22,12 @@
     <link rel="stylesheet" href="{{url('public/assets/css/mobile-menu.css')}}">
     <link rel="stylesheet" href="{{url('public/assets/fonts/flaticon/flaticon.css')}}">
     <link rel="stylesheet" href="{{url('public/assets/css/style.css')}}">
+    <style>
+        .highlighted-cart {
+    background-color: #FFD700; /* Set the background color to your desired highlight color */
+    transition: background-color 0.3s ease; /* Add a smooth transition effect */
+}
+    </style>
 </head>
 <body class="home">
 <header class="header style2">
@@ -58,10 +64,20 @@
                         </ul>
                     </div>
                 </div>
+
                 <ul class="header-user-links">
+                    @if(Session::get('id'))
+                        <a>{{ Session::get('name') }}</a>
+                        <ul class="header-user-links">
+                            <li><a href="{{ url('Logout') }}">Logout</a></li>
+                        </ul>
+                        @else
                     <li>
-                        <a href="{{ url('Login') }}">Login or Register</a>
+                        <a href="{{ url('Login') }}">Login</a>
+                         or
+                         <a href="{{ url('Signup') }}">Register</a>
                     </li>
+                    @endif
                 </ul>
             </div>
         </div>
@@ -93,9 +109,10 @@
                 <div class="col-lg-4 col-sm-12 col-md-4 col-xs-12 col-ts-12">
                     <div class="header-control">
                         <div class="block-minicart stelina-mini-cart block-header stelina-dropdown">
-                            <a href="javascript:void(0);" class="shopcart-icon" data-stelina="stelina-dropdown">
+                            <a href="{{ url('CartDetail') }}" class="shopcart-icon" data-stelina="stelina-dropdown">
                                 Cart
-                                <span class="count">
+
+                                <span class="count" id="cart-count">
 									0
 									</span>
                             </a>
@@ -134,17 +151,15 @@
                                 <li class="menu-item menu-item-has-children">
                                     <a href="{{ url('result') }}/{{ $category->slug }}" class="stelina-menu-item-title" title="Home">{{ $category->category_name }}</a>
                                     <span class="toggle-submenu"></span>
-                                    <ul>
-                                        @foreach ($categoryTree as $category)
-                                            <li>
-                                                {{ $category->category_name }}
-                                                @if (isset($category->children))
-                                                    @include('partials.subcategories', ['subcategories' => $category->children])
-                                                @endif
-                                            </li>
+                                    <ul class="submenu">
+                                        @foreach ($categories as $subcategory)
+                                            @if ($subcategory->parent_id == $category->category_id)
+                                                <li class="menu-item">
+                                                    <a href="{{ url('result') }}/{{ $category->slug }}">{{ $subcategory->category_name }}</a>
+                                                </li>
+                                            @endif
                                         @endforeach
                                     </ul>
-
                                 </li>
                             @endif
                         @endforeach

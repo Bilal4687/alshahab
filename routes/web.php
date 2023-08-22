@@ -15,6 +15,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Website\WebsiteController;
 use App\Http\Controllers\Website\MyAccount\MyAccountController;
 use App\Http\Controllers\Website\Cart\CartController;
+use App\Http\Controllers\Website\Cart\CheckoutController;
 use Illuminate\Support\Facades\DB;
 /*
 |--------------------------------------------------------------------------
@@ -42,12 +43,21 @@ Route::get('/result/{slug}/', [WebsiteController::class, 'products'])->name('res
 Route::get('/product/{productSlug}/', [WebsiteController::class, 'productdetails'])->name('product');
 Route::post('/AddToCart', [CartController::class, 'AddToCart'])->name('AddToCart');
 Route::get('/CartDetail', [CartController::class, 'CartDetail'])->name('CartDetail');
+Route::get('/RemoveFromCart', [CartController::class, 'RemoveFromCart'])->name('RemoveFromCart');
+
+Route::get('/update-cart-item-quantity', [CartController::class, 'UpdateCart'])->name('updateCartItemQuantity');
+Route::get('/UpdateCart', [CartController::class, 'UpdateCart'])->name('UpdateCart');
 // Route::get('/ProductDtails/{slug}', [WebsiteController::class, 'productdetails'])->name('productdetails');
 Route::get('/Login', [MyAccountController::class, 'Login'])->name('Login');
 Route::get('/Signup', [MyAccountController::class, 'NewRegistration'])->name('Signup');
 Route::post('/CustomerLogin', [MyAccountController::class, 'CustomerLogin'])->name('CustomerLogin');
 Route::post('/AddNewCustomer', [MyAccountController::class, 'RegisterCustomer'])->name('AddNewCustomer');
 Route::get('Logout',[MyAccountController::class,'Logout'])->name('Logout');
+
+//Checkout Routes
+Route::get('Checkout',[CheckoutController::class,'Checkout'])->name('Checkout');
+
+
 
 Route::prefix('Admin')->group(function () {
     Route::get('Dashboard', [AuthController::class, 'Dashboard'])->name('Dashboard');

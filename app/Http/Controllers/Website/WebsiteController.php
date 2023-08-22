@@ -11,6 +11,9 @@ class WebsiteController extends Controller
 
     public function Home()
     {
+
+        // session()->flash('Cart');
+        // return false;
         $customer_id = Session::get('id');
         $CartItem = DB::table('cart')->where('customer_id', $customer_id)->count();
 

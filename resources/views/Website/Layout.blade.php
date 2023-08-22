@@ -22,11 +22,37 @@
     <link rel="stylesheet" href="{{url('public/assets/css/mobile-menu.css')}}">
     <link rel="stylesheet" href="{{url('public/assets/fonts/flaticon/flaticon.css')}}">
     <link rel="stylesheet" href="{{url('public/assets/css/style.css')}}">
+      <!-- SweetAlert2 -->
+      <link rel="stylesheet" href="{{url('public/assets/js/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
+
+
+<script src="{{url('public/assets/js/jquery-1.12.4.min.js')}}"></script>
+{{-- Toaster CSS --}}
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+{{-- Toaster JS--}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <style>
         .highlighted-cart {
     background-color: #FFD700; /* Set the background color to your desired highlight color */
     transition: background-color 0.3s ease; /* Add a smooth transition effect */
+
+
 }
+  /* Add a flash effect to the cart icon */
+  .flash-cart {
+        animation: flashAnimation 0.5s linear;
+    }
+
+    @keyframes flashAnimation {
+        0%, 50%, 100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        25%, 75% {
+            opacity: 0;
+            transform: scale(1.2);
+        }
+    }
     </style>
 </head>
 <body class="home">
@@ -109,21 +135,99 @@
                 <div class="col-lg-4 col-sm-12 col-md-4 col-xs-12 col-ts-12">
                     <div class="header-control">
                         <div class="block-minicart stelina-mini-cart block-header stelina-dropdown">
-                            <a href="{{ url('CartDetail') }}" class="shopcart-icon" data-stelina="stelina-dropdown">
-                                Cart
-
+                            {{-- <a href="{{ url('CartDetail') }}" class="shopcart-icon" data-stelina="stelina-dropdown">
+                                Cart --}}
+                                <a href="javascript:void(0);" class="shopcart-icon flash-cart"" data-stelina="stelina-dropdown">
+                                    Cart
                                 <span class="count" id="cart-count">
-									0
+									@if(Session()->get('Cart'))
+                                        <p>{{ count(Session()->get('Cart')) }}</p>
+                                        @else
+                                        <p>0</p>
+                                    @endif
 									</span>
                             </a>
-                            <div class="no-product stelina-submenu">
-                                <p class="text">
-                                    You have
-                                    <span>
-											 0 item(s)
-										</span>
-                                    in your bag
-                                </p>
+                            <div class="shopcart-description stelina-submenu">
+                                <div class="content-wrap">
+                                    <h3 class="title">Shopping Cart</h3>
+                                    <ul class="minicart-items">
+                                        @if(Session()->get('Cart'))
+                                        @foreach(Session()->get('Cart')  as $id => $items)
+
+                                        <li class="product-cart mini_cart_item">
+                                            <a href="#" class="product-media">
+                                                <img src="{{ asset('public/Files/Products/' . $items['product_image' ?? '']) }}" alt="img">
+                                            </a>
+                                            <div class="product-details">
+                                                <h5 class="product-name">
+                                                    <a href="#">{{ $items['product_name' ?? ''] }}</a>
+                                                </h5>
+                                                <div class="variations">
+															<span class="attribute_color">
+																<a href="#">{{ $items['product_variation' ?? ''] }}</a>
+															</span>
+                                                            ,
+                                                    <span class="attribute_size">
+																<a href="#">{{  $items['product_attribute' ?? ''] }}</a>
+															</span>
+                                                </div>
+                                                <span class="product-price">
+															<span class="price">
+																<span>{{ $items['product_sale_price'] }}</span>
+															</span>
+														</span>
+                                                        <span class="product-quantity">
+															(x {{ $items['quantity' ?? ''] }})
+														</span>
+                                                <div class="product-remove">
+                                                    <a href=""><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        @endforeach
+                                        @endif
+
+                                    </ul>
+                                    @if(Session()->get('Cart'))
+                                    <div class="subtotal">
+                                        <span class="total-title">Subtotal: </span>
+                                        <span class="total-price">
+													<span class="Price-amount">
+                                                        @php
+                                                            $total = 0;
+                                                        @endphp
+                                                        @foreach((array) session::get('Cart') as $id => $details)
+                                                         @php
+                                                            $total += $details['product_sale_price'] * $details['quantity']
+                                                         @endphp
+                                                        @endforeach
+														{{ $total }}
+													</span>
+												</span>
+                                    </div>
+                                    <div class="actions">
+                                        <a class="button button-viewcart" href="{{ url('CartDetail') }}">
+                                            <span>View Bag</span>
+                                        </a>
+                                        <a href="checkout.html" class="button button-checkout">
+                                            <span>Checkout</span>
+                                        </a>
+                                    </div>
+                                    @else
+                                        <div class="header-control">
+                                                <div class="no-product stelina-submenu">
+                                                    <p class="text">
+                                                        You have
+                                                        <span>
+                                                                 0 item(s)
+                                                            </span>
+                                                        in your bag
+                                                    </p>
+                                                </div>
+                                        </div>
+                                    @endif
+
+                                </div>
                             </div>
                         </div>
                         <a class="menu-bar mobile-navigation menu-toggle" href="#">
@@ -407,7 +511,8 @@
 <a href="#" class="backtotop">
     <i class="fa fa-angle-double-up"></i>
 </a>
-<script src="{{url('public/assets/js/jquery-1.12.4.min.js')}}"></script>
+
+
 <script src="{{url('public/assets/js/jquery.plugin-countdown.min.js')}}"></script>
 <script src="{{url('public/assets/js/jquery-countdown.min.js')}}"></script>
 <script src="{{url('public/assets/js/bootstrap.min.js')}}"></script>
@@ -425,6 +530,8 @@
 <script src="{{url('public/assets/js/lightbox.min.js')}}"></script>
 <script src="{{url('public/assets/js/owl.thumbs.min.js')}}"></script>
 <script src="{{url('public/assets/js/jquery.scrollbar.min.js')}}"></script>
-{{-- <script src="{{url('public/assets/js/frontend-plugin.js')}}"></script> --}}
+<script src="{{url('public/assets/js/frontend-plugin.js')}}"></script>
+    <!-- //sweet Alert -->
+    <script src="{{url('public/assets/js/sweetalert2/sweetalert2.min.js')}}"></script>
 </body>
 </html>

@@ -1,5 +1,19 @@
 @extends('Website.Layout')
 @section('content')
+
+<style>
+    /* Customize Toastr alert colors */
+    .larger-toast {
+        background-color: #ab8e66; /* Replace with your desired background color */
+        color: #ffffff;/* Replace with your desired text color */
+    }
+
+    .larger-toast .toast-close-button {
+        color: #ffffff; /* Replace with your desired close button color */
+    }
+
+</style>
+
 {{-- <div class="header-device-mobile">
     <div class="wapper">
         <div class="item mobile-logo">
@@ -182,14 +196,6 @@
                                     </div>
                                 </div>
                                 <div class="quantity-add-to-cart">
-                                    <div class="quantity">
-                                        <div class="control">
-                                            <a class="btn-number qtyminus quantity-minus" href="#">-</a>
-                                            <input type="text" data-step="1" data-min="0" value="1" title="Qty"
-                                                   class="input-qty qty" size="4">
-                                            <a href="#" class="btn-number qtyplus quantity-plus">+</a>
-                                        </div>
-                                    </div>
                                     <form id="addToCart">
                                         @csrf
                                         <input type="hidden" id="product_id", name="product_id" value="{{ $productdetail->product_id }}">
@@ -403,26 +409,41 @@
                 .done((res) => {
                     $("#btnAddToCart").prop("disabled", false);
                     if (res.success) {
-                        // Increment and update the cart count dynamically
+
+                           toastr.options = {
+                            "closeButton": true,
+                    "progressBar": true,
+                    "toastClass": "larger-toast",
+                    "timeOut": 1000,
+                }
+                     // Custom CSS styles for larger size
+                     toastr.options.toastClass = 'larger-toast';
+                     toastr.options.timeOut = 1000;
+                     toastr.success("Item Added To Cart");
+
                             var cartCountElement = document.getElementById('cart-count');
                             var currentCartCount = parseInt(cartCountElement.innerText);
                             var newCartCount = currentCartCount + 1;
                             cartCountElement.innerText = newCartCount;
+                      // Add flash effect to the cart icon
+                      $('.flash-cart').addClass('flash-animation');
+                setTimeout(() => {
+                    $('.flash-cart').removeClass('flash-animation');
+                }, 1000);
 
                             // Add the highlighted effect to the cart option
                             $('#cart-link').addClass('highlighted-cart');
-
-                            // Scroll to the cart count for visual feedback
                             $('html, body').animate({
                                 scrollTop: $('#cart-count').offset().top
                             }, 1000);
+                            location.reload();
                     }else {
                         window.location.href = "{{ url('/Login') }}";
                     }
                 })
-    //             var cartCountElement = document.getElementById('cart-count');
-    // var currentCartCount = parseInt(cartCountElement.innerText);
-    // cartCountElement.innerText = currentCartCount + 1;
 }
+
+
+
 </script>
 @endsection

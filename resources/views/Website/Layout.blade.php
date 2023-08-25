@@ -22,6 +22,8 @@
     <link rel="stylesheet" href="{{url('public/assets/css/mobile-menu.css')}}">
     <link rel="stylesheet" href="{{url('public/assets/fonts/flaticon/flaticon.css')}}">
     <link rel="stylesheet" href="{{url('public/assets/css/style.css')}}">
+     <!-- BS Stepper -->
+
       <!-- SweetAlert2 -->
       <link rel="stylesheet" href="{{url('public/assets/js/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
 
@@ -139,20 +141,20 @@
                                 Cart --}}
                                 <a href="javascript:void(0);" class="shopcart-icon flash-cart"" data-stelina="stelina-dropdown">
                                     Cart
-                                <span class="count" id="cart-count">
-									@if(Session()->get('Cart'))
-                                        <p>{{ count(Session()->get('Cart')) }}</p>
+                                    <span class="count" id="cart-count">
+                                        @if(Session::get('Cart') == null)
+                                            <p>0</p>
                                         @else
-                                        <p>0</p>
-                                    @endif
-									</span>
+                                            <p>{{ count(Session::get('Cart')) }}</p>
+                                        @endif
+                                    </span>
                             </a>
                             <div class="shopcart-description stelina-submenu">
                                 <div class="content-wrap">
                                     <h3 class="title">Shopping Cart</h3>
                                     <ul class="minicart-items">
-                                        @if(Session()->get('Cart'))
-                                        @foreach(Session()->get('Cart')  as $id => $items)
+                                        @if(Session::get('Cart'))
+                                        @foreach(Session::get('Cart')  as $id => $items)
 
                                         <li class="product-cart mini_cart_item">
                                             <a href="#" class="product-media">
@@ -185,10 +187,44 @@
                                             </div>
                                         </li>
                                         @endforeach
+                                        {{-- @else --}}
+                                        {{-- @foreach($CartItem  as $items)
+
+                                        <li class="product-cart mini_cart_item">
+                                            {{-- <a href="#" class="product-media">
+                                                <img src="{{ asset('public/Files/Products/' . $items['product_image' ?? '']) }}" alt="img">
+                                            </a> --}}
+                                            {{-- <div class="product-details">
+                                                <h5 class="product-name">
+                                                    <a href="#">{{ $items->product_name }}</a>
+                                                </h5> --}}
+                                                {{-- <div class="variations">
+															<span class="attribute_color">
+																<a href="#">{{ $items['product_variation' ?? ''] }}</a>
+															</span>
+                                                            ,
+                                                    <span class="attribute_size">
+																<a href="#">{{  $items['product_attribute' ?? ''] }}</a>
+															</span>
+                                                </div>
+                                                <span class="product-price">
+															<span class="price">
+																<span>{{ $items['product_sale_price'] }}</span>
+															</span>
+														</span>
+                                                        <span class="product-quantity">
+															(x {{ $items['quantity' ?? ''] }})
+														</span>
+                                                <div class="product-remove">
+                                                    <a href=""><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                                </div>
+                                            </div> --}}
+                                        {{-- </li> --}}
+                                        {{-- @endforeach --}}
                                         @endif
 
                                     </ul>
-                                    @if(Session()->get('Cart'))
+                                    @if(Session::get('Cart'))
                                     <div class="subtotal">
                                         <span class="total-title">Subtotal: </span>
                                         <span class="total-price">
@@ -512,6 +548,13 @@
     <i class="fa fa-angle-double-up"></i>
 </a>
 
+<script>
+       function alertmsg(msg, type) {
+    $("#error").removeClass().html('').show();
+    $("#error").addClass(`alert alert-${type} text-center`).html(msg);
+    $("#error").fadeOut(3000);
+    }
+</script>
 
 <script src="{{url('public/assets/js/jquery.plugin-countdown.min.js')}}"></script>
 <script src="{{url('public/assets/js/jquery-countdown.min.js')}}"></script>
@@ -533,5 +576,7 @@
 <script src="{{url('public/assets/js/frontend-plugin.js')}}"></script>
     <!-- //sweet Alert -->
     <script src="{{url('public/assets/js/sweetalert2/sweetalert2.min.js')}}"></script>
+    <!-- BS-Stepper -->
+<script src="{{url('public/plugins/bs-stepper/js/bs-stepper.min.js')}}"></script>
 </body>
 </html>

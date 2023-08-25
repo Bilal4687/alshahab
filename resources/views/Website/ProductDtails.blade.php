@@ -410,16 +410,11 @@
                     $("#btnAddToCart").prop("disabled", false);
                     if (res.success) {
 
-                           toastr.options = {
-                            "closeButton": true,
-                    "progressBar": true,
-                    "toastClass": "larger-toast",
-                    "timeOut": 1000,
-                }
-                     // Custom CSS styles for larger size
-                     toastr.options.toastClass = 'larger-toast';
-                     toastr.options.timeOut = 1000;
-                     toastr.success("Item Added To Cart");
+                      // Add the highlighted effect to the cart option
+                           $('#cart-link').addClass('highlighted-cart');
+                            $('html, body').animate({
+                                scrollTop: $('#cart-count').offset().top
+                            }, 500);
 
                             var cartCountElement = document.getElementById('cart-count');
                             var currentCartCount = parseInt(cartCountElement.innerText);
@@ -427,19 +422,17 @@
                             cartCountElement.innerText = newCartCount;
                       // Add flash effect to the cart icon
                       $('.flash-cart').addClass('flash-animation');
-                setTimeout(() => {
-                    $('.flash-cart').removeClass('flash-animation');
-                }, 1000);
+                      setTimeout(() => {
+                              $('.flash-cart').removeClass('flash-animation');
+                        }, 100);
+                      setTimeout(() => {
+                        location.reload();
+                        }, 1000);
 
-                            // Add the highlighted effect to the cart option
-                            $('#cart-link').addClass('highlighted-cart');
-                            $('html, body').animate({
-                                scrollTop: $('#cart-count').offset().top
-                            }, 1000);
-                            location.reload();
                     }else {
                         window.location.href = "{{ url('/Login') }}";
                     }
+                    
                 })
 }
 

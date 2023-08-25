@@ -12,8 +12,6 @@ class CartController extends Controller
     public function AddToCart(Request $req)
     {
         $product_id = $req->input('product_id');
-
-
         $product = DB::table('products')
         ->join('products__pricing', 'products__pricing.product_id', '=', 'products.product_id')
         ->join('products__attributes', 'products__attributes.product_id', '=', 'products.product_id')

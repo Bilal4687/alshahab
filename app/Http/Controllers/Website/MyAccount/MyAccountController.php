@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\Hash;
 class MyAccountController extends Controller
 {
     public function Login(){
-        return view('Website.Authentication.Login');
+        $customer_id = Session::get('id');
+        $CartItem = DB::table('cart')->where('customer_id', $customer_id)->get();
+
+        return view('Website.Authentication.Login', ["CartItem" => $CartItem]);
     }
     public function NewRegistration(){
         return view('Website.Authentication.Register');

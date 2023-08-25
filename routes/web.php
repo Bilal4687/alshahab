@@ -56,6 +56,17 @@ Route::get('Logout',[MyAccountController::class,'Logout'])->name('Logout');
 
 //Checkout Routes
 Route::get('Checkout',[CheckoutController::class,'Checkout'])->name('Checkout');
+Route::get('/PlaceOrder',[CheckoutController::class,'PlaceOrder'])->name('PlaceOrder');
+Route::post('/CheckOutDetail', [CheckoutController::class, 'CheckOutDetail'])->name('CheckOutDetail');
+Route::post('/CheckOutDetailUpdate', [CheckoutController::class, 'CheckOutDetailUpdate'])->name('CheckOutDetailUpdate');
+Route::get('RazorPayPayment',[CheckoutController::class,'RazorPayPayment'])->name('RazorPayPayment');
+
+
+
+///This Are the Partial Routes
+Route::get('AddressCardContent',[CheckoutController::class,'AddressCardContent'])->name('AddressCardContent');
+Route::get('ViewBagContent',[CheckoutController::class,'ViewBagContent'])->name('ViewBagContent');
+Route::get('YourOrderContent',[CheckoutController::class,'YourOrderContent'])->name('YourOrderContent');
 
 
 

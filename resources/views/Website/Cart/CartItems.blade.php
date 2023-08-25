@@ -85,20 +85,6 @@
                                                 </div>
                                             </div>
                                         </td>
-
-
-                                        {{-- <td class="product-quantity" data-title="Quantity">
-                                            <div class="quantity">
-                                                <div class="control">
-                                                    <a class="btn-number qtyminus quantity-minus">-</a>
-                                                    <input type="number" value="{{ $items['quantity' ?? ''] }}"
-                                                           class="input-qty qty quantity cart_update" id="quantityInput"
-                                                           title="Qty" >
-                                                    <a class="btn-number qtyplus quantity-plus">+</a>
-                                                </div>
-                                            </div>
-                                        </td> --}}
-
                                         <td class="product-price" data-title="Price">
                                             <span class="woocommerce-Price-amount amount">
                                                 <span class="woocommerce-Price-currencySymbol">
@@ -108,6 +94,17 @@
                                         </td>
                                     </tr>
                                     @endforeach
+                                    @else
+                                    <div class="main-content-cart main-content col-sm-12">
+                                        <div class="page-main-content" style="text-align: center;">
+                                            <div class="shoppingcart-content">                                               
+                                                <h1 style="">Your cart is empty!</h1>
+                                                 <h5>Add items to it now.</h5>
+                                                 <a href="{{ url('/') }}" style="color:white;" class="button btn-back-to-shipping">Back to shipping</a>
+                                                      
+                                            </div>
+                                        </div>
+                                    </div>
                                     @endif
 
                                     <tr>
@@ -206,69 +203,6 @@ $(document).ready(function() {
         });
     }
 });
-
-// $(document).ready(function() {
-//     $(".qtyplus").click(function(e) {
-
-//         $(".qtyplus").prop("disabled", true);
-//         e.preventDefault();
-
-//         var productID = $(this).data("product-id");
-//         var quantityInput = $("#quantityInput_" + productID);
-//         var currentQuantity = parseInt(quantityInput.val());
-
-//         // Increment the current quantity
-//         quantityInput.val(currentQuantity + 1);
-
-//         updateCart(quantityInput);
-//     });
-
-//     $(".qtyminus").click(function(e) {
-//         $(".qtyminus").prop("disabled", true);
-//         e.preventDefault();
-
-//         var productID = $(this).data("product-id");
-
-//         var quantityInput = $("#quantityInput_" + productID);
-
-//         var currentQuantity = parseInt(quantityInput.val());
-
-//         if (currentQuantity > 1) {
-//             // Decrement the current quantity
-//             quantityInput.val(currentQuantity - 1);
-//             updateCart(quantityInput);
-//         }
-//     });
-
-//     $(".quantity").on("change", ".qty", function() {
-//         $(".quantity").prop("disabled", true);
-//         var productID = $(this).attr("id").split("_")[1];
-//         updateCart($(this), productID);
-//     });
-
-//     function updateCart(quantityInput, productID) {
-//         var quantityValue = quantityInput.val();
-
-//         $.ajax({
-//             url: "{{ route('UpdateCart') }}",
-//             data: {
-//                 _token: '{{ csrf_token() }}',
-//                 quantity: quantityValue
-
-//             },
-//             beforeSend: function(xhr) {
-//             xhr.setRequestHeader('X-ID', productID); // Set a custom header for the product ID
-//         },
-//             success: function(response) {
-//                 location.reload();
-//             },
-//             error: function(xhr, status, error) {
-//                 console.log("Error updating cart:", error);
-//             }
-//         });
-//     }
-// });
-
 
 
     $(".product-remove").click(function (e) {

@@ -165,6 +165,11 @@ class CheckoutController extends Controller
 
     public function PlaceOrder(Request $req){
 
+        $cart = DB::table('cart')->where('customer_id', $req->input('customerId'))->get();
+        dd($cart);
+        return false;
+
+
         $order = DB::table('orders')->insert([
             'customer_id' => $req->input('customerId'),
             'order_status' => 0,
@@ -172,16 +177,9 @@ class CheckoutController extends Controller
             'payment_method' => 'Cash On Deliver',
             'order_date' => now(),
         ]);
-
-
-
         if($order){
-
-
             return response()->json(['success' => true, 'message' => 'Order Placed Successfully...']);
         }else{
-
-
             return response()->json(['success' => false, 'message' => 'Opps Something Went Wrong...!']);
         }
     }

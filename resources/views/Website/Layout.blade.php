@@ -58,6 +58,9 @@
     </style>
 </head>
 <body class="home">
+
+
+
 <header class="header style2">
     <div class="top-bar">
         <div class="container">
@@ -103,7 +106,7 @@
                     <li>
                         <a href="{{ url('Login') }}">Login</a>
                          or
-                         <a href="{{ url('Signup') }}">Register</a>
+                         <a href="{{ url('Signup') }}">Sign Up</a>
                     </li>
                     @endif
                 </ul>
@@ -137,135 +140,115 @@
                 <div class="col-lg-4 col-sm-12 col-md-4 col-xs-12 col-ts-12">
                     <div class="header-control">
                         <div class="block-minicart stelina-mini-cart block-header stelina-dropdown">
-                            {{-- <a href="{{ url('CartDetail') }}" class="shopcart-icon" data-stelina="stelina-dropdown">
-                                Cart --}}
-                                <a href="javascript:void(0);" class="shopcart-icon flash-cart"" data-stelina="stelina-dropdown">
-                                    Cart
-                                    <span class="count" id="cart-count">
-                                        @if(Session::get('Cart') == null)
-                                            <p>0</p>
-                                        @else
-                                            <p>{{ count(Session::get('Cart')) }}</p>
-                                        @endif
-                                    </span>
+
+                            <a href="javascript:void(0);" class="shopcart-icon flash-cart" data-stelina="stelina-dropdown">
+                                Cart
+                                <span class="count" id="cart-count">
+                                    @php
+                                    $cartItems = App\Helpers\CartHelper::getCart();
+                                    $cartItemCount = 0;
+
+                                    if (is_array($cartItems)) {
+                                        $cartItemCount = count($cartItems);
+                                    } elseif (is_object($cartItems)) {
+                                        $cartItemCount = count($cartItems->items);
+                                    }
+                                    @endphp
+                                 <p>{{ $cartItemCount }}</p>
+                                </span>
                             </a>
+
+
+
+
                             <div class="shopcart-description stelina-submenu">
                                 <div class="content-wrap">
                                     <h3 class="title">Shopping Cart</h3>
                                     <ul class="minicart-items">
-                                        @if(Session::get('Cart'))
-                                        @foreach(Session::get('Cart')  as $id => $items)
 
-                                        <li class="product-cart mini_cart_item">
+                                        @php
+                                            $cartItems = App\Helpers\CartHelper::getCart();
+
+                                        @endphp
+
+                                        @if(!empty($cartItems) && is_array($cartItems))
+                                        @foreach($cartItems as $item)
+                                        <li class="product-cart mini_cart_item" data-id="{{ $item['product_id'] }}">
                                             <a href="#" class="product-media">
-                                                <img src="{{ asset('public/Files/Products/' . $items['product_image' ?? '']) }}" alt="img">
+                                                <img src="{{ asset('public/Files/Products/' . $item['product_thumbnail']) }}" alt="img">
                                             </a>
                                             <div class="product-details">
                                                 <h5 class="product-name">
-                                                    <a href="#">{{ $items['product_name' ?? ''] }}</a>
+                                                    <a href="#">{{ $item['product_name'] }}</a>
                                                 </h5>
                                                 <div class="variations">
-															<span class="attribute_color">
-																<a href="#">{{ $items['product_variation' ?? ''] }}</a>
-															</span>
-                                                            ,
+                                                    <span class="attribute_color">
+                                                        <a href="#">{{ $item['products__variations']['variation_value'] }}</a>
+                                                    </span>,
                                                     <span class="attribute_size">
-																<a href="#">{{  $items['product_attribute' ?? ''] }}</a>
-															</span>
+                                                        <a href="#">{{ $item['products__attributes']['attribute_value'] }}</a>
+                                                    </span>
                                                 </div>
                                                 <span class="product-price">
-															<span class="price">
-																<span>{{ $items['product_sale_price'] }}</span>
-															</span>
-														</span>
-                                                        <span class="product-quantity">
-															(x {{ $items['quantity' ?? ''] }})
-														</span>
+                                                    <span class="price">
+                                                        <span>{{ $item['products__pricing']['sale_price'] }}</span>
+                                                    </span>
+                                                </span>
+                                                <span class="product-quantity">
+                                                    (x {{ $item['quantity']}})
+                                                </span>
+
+
                                                 <div class="product-remove">
                                                     <a href=""><i class="fa fa-trash-o" aria-hidden="true"></i></a>
                                                 </div>
                                             </div>
                                         </li>
                                         @endforeach
-                                        {{-- @else --}}
-                                        {{-- @foreach($CartItem  as $items)
-
-                                        <li class="product-cart mini_cart_item">
-                                            {{-- <a href="#" class="product-media">
-                                                <img src="{{ asset('public/Files/Products/' . $items['product_image' ?? '']) }}" alt="img">
-                                            </a> --}}
-                                            {{-- <div class="product-details">
-                                                <h5 class="product-name">
-                                                    <a href="#">{{ $items->product_name }}</a>
-                                                </h5> --}}
-                                                {{-- <div class="variations">
-															<span class="attribute_color">
-																<a href="#">{{ $items['product_variation' ?? ''] }}</a>
-															</span>
-                                                            ,
-                                                    <span class="attribute_size">
-																<a href="#">{{  $items['product_attribute' ?? ''] }}</a>
-															</span>
-                                                </div>
-                                                <span class="product-price">
-															<span class="price">
-																<span>{{ $items['product_sale_price'] }}</span>
-															</span>
-														</span>
-                                                        <span class="product-quantity">
-															(x {{ $items['quantity' ?? ''] }})
-														</span>
-                                                <div class="product-remove">
-                                                    <a href=""><i class="fa fa-trash-o" aria-hidden="true"></i></a>
-                                                </div>
-                                            </div> --}}
-                                        {{-- </li> --}}
-                                        {{-- @endforeach --}}
-                                        @endif
 
                                     </ul>
-                                    @if(Session::get('Cart'))
-                                    <div class="subtotal">
-                                        <span class="total-title">Subtotal: </span>
-                                        <span class="total-price">
-													<span class="Price-amount">
+                                        <div class="subtotal">
+                                            <span class="total-title">Subtotal: </span>
+                                            <span class="total-price">
+                                                <span class="Price-amount">
+                                                    @php
+                                                        $total = 0;
+                                                    @endphp
+                                                    @foreach ($cartItems as $item)
                                                         @php
-                                                            $total = 0;
+                                                            $total += $item['products__pricing']['sale_price'] * $item['quantity'];
                                                         @endphp
-                                                        @foreach((array) session::get('Cart') as $id => $details)
-                                                         @php
-                                                            $total += $details['product_sale_price'] * $details['quantity']
-                                                         @endphp
-                                                        @endforeach
-														{{ $total }}
-													</span>
-												</span>
-                                    </div>
-                                    <div class="actions">
-                                        <a class="button button-viewcart" href="{{ url('CartDetail') }}">
-                                            <span>View Bag</span>
-                                        </a>
-                                        <a href="checkout.html" class="button button-checkout">
-                                            <span>Checkout</span>
-                                        </a>
-                                    </div>
-                                    @else
-                                        <div class="header-control">
-                                                <div class="no-product stelina-submenu">
-                                                    <p class="text">
-                                                        You have
-                                                        <span>
-                                                                 0 item(s)
-                                                            </span>
-                                                        in your bag
-                                                    </p>
-                                                </div>
+                                                    @endforeach
+                                                    {{ $total }}
+                                                </span>
+                                            </span>
                                         </div>
-                                    @endif
+                                        <div class="actions">
+                                            <a class="button button-viewcart" href="{{ url('ViewCart') }}">
+                                                <span>View Bag</span>
+                                            </a>
+                                            <a href="{{ route('Checkout') }}" class="button button-checkout">
+                                                <span>Checkout</span>
+                                            </a>
+                                        </div>
+                                        @else
 
+                                        <div>
+                                            <p class="text">
+                                                You have
+                                                <span style="color:#ab8e66">
+                                                    0 item(s)
+                                                </span>
+                                                in your bag
+                                            </p>
+                                        </div>
+
+
+                                    @endif
                                 </div>
                             </div>
                         </div>
+
                         <a class="menu-bar mobile-navigation menu-toggle" href="#">
                             <span></span>
                             <span></span>
@@ -317,7 +300,7 @@
         <div class="item mobile-logo">
             <div class="logo">
                 <a href="#">
-                    <img src="public/assets/images/logo.png" alt="img">
+                    <img src="{{ asset('public/assets/images/Guessmyscent.png') }}" alt="img">
                 </a>
             </div>
         </div>
@@ -508,7 +491,7 @@
 <div class="footer-device-mobile">
     <div class="wapper">
         <div class="footer-device-mobile-item device-home">
-            <a href="index.html">
+            <a href="{{ url('/') }}">
 					<span class="icon">
 						<i class="fa fa-home" aria-hidden="true"></i>
 					</span>
@@ -523,17 +506,37 @@
                 Wishlist
             </a>
         </div>
+
+
+
         <div class="footer-device-mobile-item device-home device-cart">
-            <a href="#">
+
+
+
+            <a href="{{ url('ViewCart') }}">
 					<span class="icon">
 						<i class="fa fa-shopping-basket" aria-hidden="true"></i>
 						<span class="count-icon">
-							0
+                                @php
+                                    $cartItems = App\Helpers\CartHelper::getCart();
+                                    $cartItemCount = 0;
+
+                                    if (is_array($cartItems)) {
+                                        $cartItemCount = count($cartItems);
+                                    } elseif (is_object($cartItems)) {
+                                        $cartItemCount = count($cartItems->items);
+                                    }
+                                @endphp
+                                <p>{{ $cartItemCount }}</p>
 						</span>
 					</span>
                 <span class="text">Cart</span>
             </a>
         </div>
+
+
+
+
         <div class="footer-device-mobile-item device-home device-user">
             <a href="login.html">
 					<span class="icon">
@@ -554,6 +557,48 @@
     $("#error").addClass(`alert alert-${type} text-center`).html(msg);
     $("#error").fadeOut(3000);
     }
+
+    $(".product-remove").click(function (e) {
+        e.preventDefault();
+        var ele = $(this);
+        Swal.fire({
+            title: "Remove Item",
+            text: "Are you sure you want to remove this item?",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Remove",
+            cancelButtonText: "Cancel",
+            customClass: {
+                popup: 'swal-large',
+                title: 'swal-large swal-title',
+                content: 'swal-large swal-text',
+            }
+            })
+            .then((willDelete) => {
+                        if (willDelete) {
+                            $.get("{{ route('RemoveFromCart') }}", {
+                                _token : '{{ csrf_token() }}',
+                                id : ele.parents("li").attr("data-id")
+                            }, function(res) {
+                                if (res['success']) {
+                                    Swal.fire({
+                                        title: "Successful...",
+                                        text: res.message,
+                                        icon: "success",
+                                        customClass: {
+                                            popup: 'swal-large', // Apply the custom class to the modal
+                                            title: 'swal-large swal-title', // Apply the custom class to the title
+                                            content: 'swal-large swal-text', // Apply the custom class to the text content
+                                        }
+                                    })
+                                    location.reload();
+                                }
+                            });
+                        }
+                    });
+    });
+
 </script>
 
 <script src="{{url('public/assets/js/jquery.plugin-countdown.min.js')}}"></script>

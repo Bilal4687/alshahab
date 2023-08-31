@@ -46,90 +46,92 @@
                             <form action="shoppingcart.html" class="cart-form">
                                 <table class="shop_table">
                                     <thead>
-                                    <tr>
-                                        <th class="product-remove"></th>
-                                        <th class="product-thumbnail"></th>
-                                        <th class="product-name"></th>
-                                        <th class="product-price"></th>
-                                        <th class="product-quantity"></th>
-                                        <th class="product-subtotal"></th>
-                                    </tr>
+                                        <tr>
+                                            <th class="product-remove"></th>
+                                            <th class="product-thumbnail"></th>
+                                            <th class="product-name"></th>
+                                            <th class="product-price"></th>
+                                            <th class="product-quantity"></th>
+                                            <th class="product-subtotal"></th>
+                                        </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $cartItems = App\Helpers\CartHelper::getCart();
+                                        @endphp
 
-                                    @if(session::get('Cart'))
-                                        @foreach(session::get('Cart') as $id => $items)
+                                        @if(!empty($cartItems) && is_array($cartItems))
+                                            @foreach($cartItems as $items)
+                                                <tr class="cart_item" data-id="{{ $items['product_id'] }}">
+                                                    <td class="product-remove">
+                                                        <a class="remove"></a>
+                                                    </td>
+                                                    <td class="product-thumbnail">
+                                                        <a href="#">
+                                                            <img src="{{ asset('public/Files/Products/' . ($items['product_thumbnail'] ?? '')) }}" alt="img" class="attachment-shop_thumbnail size-shop_thumbnail wp-post-image">
+                                                        </a>
+                                                    </td>
+                                                    <td class="product-name" data-title="Product">
+                                                        <a href="#" class="title">{{ $items['product_name'] ?? '' }}</a>
+                                                        <span class="attributes-select attributes-color">{{ $items['products__variations']['variation_value'] ?? '' }}</span>
+                                                        <span class="attributes-select attributes-size">{{ $items['products__attributes']['attribute_value'] ?? '' }}</span>
+                                                    </td>
+                                                    <td class="product-quantity" data-title="Quantity">
+                                                        <div class="quantity">
+                                                            <div class="control">
+                                                                <a class="btn-number qtyminus quantity-minus" data-product-id="{{ $items['product_id'] }}">-</a>
+                                                                <input type="number" value="{{ $items['quantity'] }}" min="1" class="input-qty qty quantity cart_update" id="quantityInput_{{ $items['product_id'] }}" title="Qty">
+                                                                <a class="btn-number qtyplus quantity-plus" data-product-id="{{ $items['product_id'] }}">+</a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="product-price" data-title="Price">
+                                                        <span class="woocommerce-Price-amount amount">
+                                                            <span class="woocommerce-Price-currencySymbol">
+                                                                {{ $items['products__pricing']['sale_price'] ?? '' }}
+                                                            </span>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            <tr>
+                                                <td colspan="6">
+                                                    <div class="main-content-cart main-content col-sm-12">
+                                                        <div class="page-main-content" style="text-align: center;">
+                                                            <div class="shoppingcart-content">
+                                                                <h1>Your cart is empty!</h1>
+                                                                <a href="{{ url('/') }}" style="color:white;" class="button btn-back-to-shipping">Back to shipping</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endif
 
-                                        <tr class="cart_item" data-id="{{ $id }}">
-                                            <td class="product-remove">
-                                            <a class="remove"></a>
-                                        </td>
-                                        <td class="product-thumbnail">
-                                            <a href="#">
-                                                <img src="{{ asset('public/Files/Products/' . $items['product_image' ?? '']) }}" alt="img"
-                                                     class="attachment-shop_thumbnail size-shop_thumbnail wp-post-image">
-                                            </a>
-                                        </td>
-                                        <td class="product-name" data-title="Product">
-                                            <a href="#" class="title">{{ $items['product_name' ?? ''] }}</a>
-                                            <span class="attributes-select attributes-color">{{ $items['product_variation' ?? ''] }}</span>
-                                            <span class="attributes-select attributes-size">{{  $items['product_attribute' ?? ''] }}</span>
-                                        </td>
-
-                                        <td class="product-quantity" data-title="Quantity">
-                                            <div class="quantity">
-                                                <div class="control">
-                                                    <a class="btn-number qtyminus quantity-minus" data-product-id="{{ $items['product_id'] }}">-</a>
-                                                    <input type="number" value="{{ $items['quantity'] }}" class="input-qty qty quantity cart_update" id="quantityInput_{{ $items['product_id'] }}" title="Qty">
-                                                    <a class="btn-number qtyplus quantity-plus" data-product-id="{{ $items['product_id'] }}">+</a>
+                                        <tr>
+                                            <td class="actions">
+                                                <div class="coupon">
+                                                    <label class="coupon_code">Coupon Code:</label>
+                                                    <input type="text" class="input-text" placeholder="Promotion code here">
+                                                    <a href="#" class="button"></a>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td class="product-price" data-title="Price">
-                                            <span class="woocommerce-Price-amount amount">
-                                                <span class="woocommerce-Price-currencySymbol">
-                                                    {{ $items['product_sale_price' ?? ''] }}
-                                                </span>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                    @else
-                                    <div class="main-content-cart main-content col-sm-12">
-                                        <div class="page-main-content" style="text-align: center;">
-                                            <div class="shoppingcart-content">                                               
-                                                <h1 style="">Your cart is empty!</h1>
-                                                 <h5>Add items to it now.</h5>
-                                                 <a href="{{ url('/') }}" style="color:white;" class="button btn-back-to-shipping">Back to shipping</a>
-                                                      
-                                            </div>
-                                        </div>
-                                    </div>
-                                    @endif
-
-                                    <tr>
-                                        <td class="actions">
-                                            <div class="coupon">
-                                                <label class="coupon_code">Coupon Code:</label>
-                                                <input type="text" class="input-text" placeholder="Promotion code here">
-                                                <a href="#" class="button"></a>
-                                            </div>
-                                            <div class="order-total">
-														<span class="title">
-															Total Price:
-														</span>
-                                                        @php
+                                                <div class="order-total">
+                                                    <span class="title">
+                                                        Total Price:
+                                                    </span>
+                                                    @php
                                                         $total = 0;
                                                     @endphp
-                                                    @foreach((array) session::get('Cart') as $id => $details)
-                                                     @php
-                                                        $total += $details['product_sale_price'] * $details['quantity']
-                                                     @endphp
+                                                    @foreach($cartItems as $id => $details)
+                                                        @php
+                                                            $total += $details['products__pricing']['sale_price'] * $details['quantity'];
+                                                        @endphp
                                                     @endforeach
                                                     {{ $total }}
-                                            </div>
-                                        </td>
-                                    </tr>
+                                                </div>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </form>
@@ -143,6 +145,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -156,11 +159,10 @@ $(document).ready(function() {
         e.preventDefault();
 
         var productID = $(this).data("product-id");
+        // console.log(productID);
+        // return false;
         var quantityInput = $("#quantityInput_" + productID);
         var currentQuantity = parseInt(quantityInput.val());
-
-        // Increment the current quantity
-        quantityInput.val(currentQuantity + 1);
 
         updateCart(productID, quantityInput.val());
     });
@@ -170,12 +172,14 @@ $(document).ready(function() {
         e.preventDefault();
 
         var productID = $(this).data("product-id");
+
         var quantityInput = $("#quantityInput_" + productID);
         var currentQuantity = parseInt(quantityInput.val());
 
         if (currentQuantity > 1) {
             // Decrement the current quantity
             quantityInput.val(currentQuantity - 1);
+
             updateCart(productID, quantityInput.val());
         }
     });
@@ -208,18 +212,19 @@ $(document).ready(function() {
     $(".product-remove").click(function (e) {
         e.preventDefault();
         var ele = $(this);
+
         Swal.fire({
             title: "Remove Item",
             text: "Are you sure you want to remove this item?",
-            showCancelButton: true, // Show the "Cancel" button
+            showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
             confirmButtonText: "Remove",
             cancelButtonText: "Cancel",
             customClass: {
-                popup: 'swal-large', // Apply the custom class to the modal
-                title: 'swal-large swal-title', // Apply the custom class to the title
-                content: 'swal-large swal-text', // Apply the custom class to the text content
+                popup: 'swal-large',
+                title: 'swal-large swal-title',
+                content: 'swal-large swal-text',
             }
             })
             .then((willDelete) => {

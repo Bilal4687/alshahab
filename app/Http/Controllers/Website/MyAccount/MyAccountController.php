@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\CartHelper;
 use Illuminate\Support\Facades\Hash;
 
 class MyAccountController extends Controller
@@ -46,7 +47,6 @@ class MyAccountController extends Controller
             $RegisterCustomer = DB::table('customers')->insert(
                 ['customer_name' => $req->input('customer_name'),
                  'customer_email' => $req->input('customer_email'),
-                 'customer_mobile' => $req->input('customer_mobile'),
                  'customer_password' => $passHash
                 ]
             );
@@ -83,6 +83,7 @@ class MyAccountController extends Controller
             Session::put('email', $Customer->customer_email);
             Session::put('token', Hash::make( env('TOKEN_SECRET', false)));
             Session::save();
+            CartHelper::transferSessionToCartTable($Customer->customer_id);
             return response()->json(["success" => true, "message" => "Login Successfull...Redirecting"]);
         }
         else{

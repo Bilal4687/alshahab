@@ -5,41 +5,20 @@ namespace App\Http\Controllers\Website\Cart;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Session;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\CartHelper;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
+
 class CheckoutController extends Controller
 {
-    public function AddressCardContent(){
-        $customerData = DB::table('customers__address')->orderBy('created_at', 'desc')
-        ->latest() 
-        ->first();
-    
 
-         $view = view('Website.Cart.Partials.address_card', ['customerData' => $customerData])->render();
-        return response()->json(['data' => $view]);
-    
-    }
-    public function ViewBagContent(){
-    
-        // $data = Session::get('Cart');
+    public function Checkout(Request $req)
+    {
+        $CustomerId = Session::get('id');
 
-         $view = view('Website.Cart.Partials.OrderSummaryCard')->render();
-     
-        return response()->json(['data' => $view]);
-    
-    }
-    public function YourOrderContent(){
-    
-
-         $view = view('Website.Cart.Partials.YourOrderCard')->render();
-     
-        return response()->json(['data' => $view]);
-    
-    }
-    public function Checkout(){
-
-        if(Session::get('id') == null){
-            return view('Website.Authentication.Login');
+         if(!$CustomerId){
+            return view('Website.Cart.Checkout');
         }
         else
         {
@@ -51,56 +30,55 @@ class CheckoutController extends Controller
             $Customer = DB::table('customers')
             ->leftJoin('customers__address', 'customers__address.customer_id', '=', 'customers.customer_id')
             ->leftJoin('states', 'states.state_id', '=', 'customers__address.state_id')
-            ->select('customers.*', 'states.*', 'customers__address.*') // Select the specific columns you need
+            ->select('customers.*', 'states.*', 'customers__address.*')
             ->where('customers.customer_id', $id)
-            ->orderBy('customers__address.created_at', 'desc') // Order addresses by created_at in descending order
-            ->latest() // Retrieve the latest (most recent) address
+            ->orderBy('customers__address.created_at', 'desc')
+            ->latest()
             ->first();
 
             return view('Website.Cart.Checkout',["CustomerData" => $Customer, "StateData" => $State, "Customer_id" => $Customer_id]);
         }
     }
-    public function RazorPayPayment(Request $req){
 
-        // $data = $req->all();
-        // dd($data);
-        // return false;
-        if(Session::get('Cart')){
-            $total = 0;
-            foreach(Session::get('Cart') as $itemdata){
-                $product = DB::table('products')
-                ->join('products__pricing', 'products__pricing.product_id', '=', 'products.product_id')
-                ->join('products__attributes', 'products__attributes.product_id', '=', 'products.product_id')
-                ->join('products__variations', 'products__variations.product_id', '=', 'products.product_id')
-                ->select('products__pricing.*', 'products.*', 'products__attributes.*', 'products__variations.*')
-                ->where('products.product_id', $itemdata['product_id'])
-                ->first();
-                $price_value = $product->sale_price;
+    // Check Customer LOgin Flow And Transfer Session Data to cart
+    public function CheckoutLoginFlow(Request $req)
+    {
 
-                $total = $total + ($itemdata['quantity'] * $price_value);
-                $cartProducts[] = $product;
-                // $product = DB::table('products')->where('product_id', $itemdata['product_id'])->get();
-            }
+        $validator = Validator::make($req->all(), [
+            'customer_email' => 'required|email',
+            'customer_password' => 'required'
+        ]);
 
-            return response()->json(['success' => true,'data' => $cartProducts, 'GrandTotal' =>  $total]);
+        if($validator->fails()) {
+            return response()->json(["validate" => true, "message" =>$validator->errors()->all()[0]]);
+        }
+
+        $Customer = DB::table('customers')->where(["customer_email" => $req->input('customer_email')])->first();
+
+        if(!$Customer){
+        return response()->json(["success" => false, "message" => "Invalid Credential"]);
+        }
+
+        if(Hash::check($req->input('customer_password'), $Customer->customer_password)){
+            Session::put('id', $Customer->customer_id);
+            Session::put('name', $Customer->customer_name);
+            Session::put('email', $Customer->customer_email);
+            Session::put('token', Hash::make( env('TOKEN_SECRET', false)));
+            Session::save();
+
+            CartHelper::transferSessionToCartTable($Customer->customer_id);
+
+            return response()->json(["success" => true, "message" => "Login Successfull...Redirecting"]);
         }
         else{
-                return response()->json(['success' => false, 'message' => 'Your Cart Is Empty']);
+            return response()->json(["success" => false, "message" => "Invalid Credential"]);
         }
+
     }
+    // Insert Customer New Address Or Primary Address
+
     public function CheckOutDetail(Request $req)
     {
-        $sessionData = $req->session()->get('Cart');
-        $productIds = array_column($sessionData, 'product_id');
-        $customerId = $req->input('customer_id');
-
-        foreach ($productIds as $productId) {
-            DB::table('cart')->insert([
-                'customer_id' => $customerId,
-                'product_id' => $productId,
-            ]);
-        }
-
         $validator = Validator::make($req->all(), [
             'customer_name' => 'required',
             'customer_mobile' => 'required',
@@ -116,7 +94,7 @@ class CheckoutController extends Controller
 
         try {
             $Customer_data = DB::table('customers__address')->insert([
-                'customer_id' => $customerId,
+                'customer_id' => $req->input('customer_id'),
                 'customer_mobile' => $req->input('customer_mobile'),
                 'customer_name' => $req->input('customer_name'),
                 'customer_pincode' => $req->input('customer_pincode'),
@@ -132,19 +110,11 @@ class CheckoutController extends Controller
         }
 
     }
+
+    // Update Customer Existing Address
+
     public function CheckOutDetailUpdate(Request $req)
     {
-          $sessionData = $req->session()->get('Cart');
-        $productIds = array_column($sessionData, 'product_id');
-        $customerId = $req->input('customer_id');
-
-        foreach ($productIds as $productId) {
-            DB::table('cart')->insert([
-                'customer_id' => $customerId,
-                'product_id' => $productId,
-            ]);
-        }
-
         $validator = Validator::make($req->all(), [
             'customer_name' => 'required',
             'customer_mobile' => 'required',
@@ -153,8 +123,6 @@ class CheckoutController extends Controller
             'customer_address' => 'required',
             'customer_city' => 'required'
         ]);
-
-
 
         if ($validator->fails()) {
             return response()->json(["validate" => true, "message" => $validator->errors()->all()[0]]);
@@ -189,9 +157,32 @@ class CheckoutController extends Controller
         } catch (\Throwable $th) {
             return response()->json(["success" => false, "message" => "Opps an Error Occured", "err" => $th->getMessage()]);
         }
+    }
+    public function RazorPayPayment(Request $req)
+    {
 
     }
-    public function PlaceOrder(){
-        return view('Website.Cart.PlaceOrder');
+
+    public function PlaceOrder(Request $req){
+
+        $order = DB::table('orders')->insert([
+            'customer_id' => $req->input('customerId'),
+            'order_status' => 0,
+            'total_amount' => $req->input('GrandTotal'),
+            'payment_method' => 'Cash On Deliver',
+            'order_date' => now(),
+        ]);
+
+
+
+        if($order){
+
+
+            return response()->json(['success' => true, 'message' => 'Order Placed Successfully...']);
+        }else{
+
+
+            return response()->json(['success' => false, 'message' => 'Opps Something Went Wrong...!']);
+        }
     }
 }

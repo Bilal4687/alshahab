@@ -11,7 +11,7 @@
 								<a href="index.html">Home</a>
 							</li>
 							<li class="trail-item trail-end active">
-								Authentication
+								Sign In
 							</li>
 						</ul>
 					</div>
@@ -20,8 +20,8 @@
 			<div class="row">
 				<div class="content-area col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="site-main">
-						<h3 class="custom_blog_title">
-							Authentication
+						<h3 class="header-message">
+							Discover Your Fragrance Journey Today!
 						</h3>
 						<div class="customer_login">
 							<div class="row">

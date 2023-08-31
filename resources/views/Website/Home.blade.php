@@ -95,16 +95,16 @@
                             <div class="product-thumb">
                                 <div class="thumb-inner">
 
-                                    <a href="{{url('ProductDtails')}}/{{$New->product_slug ?? ''}}">
+                                    <a href="{{url('product')}}/{{$New->product_slug ?? ''}}">
                                       <img src="public/Files/Products/{{$New->product_thumbnail}}" alt="img">
                                     </a>
                                     <div class="thumb-group">
                                         <div class="yith-wcwl-add-to-wishlist">
                                             <div class="yith-wcwl-add-button">
-                                                <a href="#">Add to Wishlist</a>
+                                                <a href="{{url('product')}}/{{$New->product_slug ?? ''}}">Add to Wishlist</a>
                                             </div>
                                         </div>
-                                        <a href="#" class="button quick-wiew-button">Quick View</a>
+                                        <a href="{{url('product')}}/{{$New->product_slug ?? ''}}" class="button quick-wiew-button">Quick View</a>
                                         <div class="loop-form-add-to-cart">
                                             <button class="single_add_to_cart_button button">Add to cart
                                             </button>
@@ -180,7 +180,7 @@
                                         </div>
                                         <div class="info">
                                             <h5 class="name">
-                                                Adam Smith
+                                                Guessmyscent
                                                 <span>Shop Owner</span>
                                             </h5>
                                             <div class="text">
@@ -199,7 +199,7 @@
                                         </div>
                                         <div class="info">
                                             <h5 class="name">
-                                                Adam Smith
+                                                Guessmyscent
                                                 <span>Shop Owner</span>
                                             </h5>
                                             <div class="text">
@@ -297,7 +297,7 @@
                                  </div>
                                  <div class="product-thumb">
                                      <div class="thumb-inner">
-                                         <a href="{{url('ProductDtails')}}/{{$New->product_slug}}">
+                                         <a href="{{url('product')}}/{{$New->product_slug}}">
                                              <img src="public/Files/Products/{{$New->product_thumbnail}}" alt="img">
                                          </a>
                                          <div class="thumb-group">
@@ -675,7 +675,7 @@
                                         <div class="blog-meta-wrapp">
                                                 <span class="author">
                                                     <img src="public/assets/images/avt-blog1.png" alt="img">
-                                                    Adam Smith
+                                                    Guessmyscent
                                                 </span>
                                             <span class="view">
                                                     <i class="icon fa fa-eye" aria-hidden="true"></i>
@@ -734,7 +734,7 @@
                                         <div class="blog-meta-wrapp">
 												<span class="author">
 													<img src="public/assets/images/avt-blog1.png" alt="img">
-													Adam Smith
+													Guessmyscent
 												</span>
                                             <span class="view">
 													<i class="icon fa fa-eye" aria-hidden="true"></i>
@@ -792,7 +792,7 @@
                                         <div class="blog-meta-wrapp">
 												<span class="author">
 													<img src="public/assets/images/avt-blog1.png" alt="img">
-													Adam Smith
+													Guessmyscent
 												</span>
                                             <span class="view">
 													<i class="icon fa fa-eye" aria-hidden="true"></i>

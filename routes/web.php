@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+// AdminPanel Controllers
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\CategoryController;
@@ -12,6 +13,8 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VariationController;
 use App\Http\Controllers\BlogController;
+
+//Website Controllers
 use App\Http\Controllers\Website\WebsiteController;
 use App\Http\Controllers\Website\MyAccount\MyAccountController;
 use App\Http\Controllers\Website\Cart\CartController;
@@ -30,46 +33,47 @@ use Illuminate\Support\Facades\DB;
 
 View::composer(['*'], function ($view) {
     $categories = DB::table('categories')->get();
-
-
-
     $view->with([
         'categories' => $categories
     ]);
 });
 
+
+
+//Website Controller Home page
 Route::get('/', [WebsiteController::class, 'Home'])->name('Home');
 Route::get('/result/{slug}/', [WebsiteController::class, 'products'])->name('result');
 Route::get('/product/{productSlug}/', [WebsiteController::class, 'productdetails'])->name('product');
-Route::post('/AddToCart', [CartController::class, 'AddToCart'])->name('AddToCart');
-Route::get('/CartDetail', [CartController::class, 'CartDetail'])->name('CartDetail');
-Route::get('/RemoveFromCart', [CartController::class, 'RemoveFromCart'])->name('RemoveFromCart');
+Route::get('/ListView/{productSlug}/', [WebsiteController::class, 'ListView'])->name('ListView');
+Route::get('/SortProductByNumber', [WebsiteController::class, 'SortProductByNumber'])->name('SortProductByNumber');
 
-Route::get('/update-cart-item-quantity', [CartController::class, 'UpdateCart'])->name('updateCartItemQuantity');
+
+//CartController Cart Item Page
+Route::post('/AddToCart', [CartController::class, 'AddToCart'])->name('AddToCart');
+Route::get('/ViewCart', [CartController::class, 'ViewCart'])->name('ViewCart');
+Route::get('/RemoveFromCart', [CartController::class, 'RemoveFromCart'])->name('RemoveFromCart');
 Route::get('/UpdateCart', [CartController::class, 'UpdateCart'])->name('UpdateCart');
-// Route::get('/ProductDtails/{slug}', [WebsiteController::class, 'productdetails'])->name('productdetails');
+
+//CheckoutContoller Routes Checkout Page
+Route::get('/Checkout', [CheckoutController::class, 'Checkout'])->name('Checkout');
+Route::post('CheckoutLoginFlow', [CheckoutController::class, 'CheckoutLoginFlow'])->name('CheckoutLoginFlow');
+Route::post('/CheckOutDetail', [CheckoutController::class, 'CheckOutDetail'])->name('CheckOutDetail');
+Route::post('/CheckOutDetailUpdate', [CheckoutController::class, 'CheckOutDetailUpdate'])->name('CheckOutDetailUpdate');
+Route::get('RazorPayPayment', [CheckoutController::class, 'RazorPayPayment'])->name('RazorPayPayment');
+Route::get('/PlaceOrder', [CheckoutController::class, 'PlaceOrder'])->name('PlaceOrder');
+
+// MyAccountController Routes Handles Login rgistraion of customer
 Route::get('/Login', [MyAccountController::class, 'Login'])->name('Login');
 Route::get('/Signup', [MyAccountController::class, 'NewRegistration'])->name('Signup');
 Route::post('/CustomerLogin', [MyAccountController::class, 'CustomerLogin'])->name('CustomerLogin');
 Route::post('/AddNewCustomer', [MyAccountController::class, 'RegisterCustomer'])->name('AddNewCustomer');
-Route::get('Logout',[MyAccountController::class,'Logout'])->name('Logout');
+Route::get('Logout', [MyAccountController::class, 'Logout'])->name('Logout');
 
-//Checkout Routes
-Route::get('Checkout',[CheckoutController::class,'Checkout'])->name('Checkout');
-Route::get('/PlaceOrder',[CheckoutController::class,'PlaceOrder'])->name('PlaceOrder');
-Route::post('/CheckOutDetail', [CheckoutController::class, 'CheckOutDetail'])->name('CheckOutDetail');
-Route::post('/CheckOutDetailUpdate', [CheckoutController::class, 'CheckOutDetailUpdate'])->name('CheckOutDetailUpdate');
-Route::get('RazorPayPayment',[CheckoutController::class,'RazorPayPayment'])->name('RazorPayPayment');
+// Websites Routes Ended Here
 
 
 
-///This Are the Partial Routes
-Route::get('AddressCardContent',[CheckoutController::class,'AddressCardContent'])->name('AddressCardContent');
-Route::get('ViewBagContent',[CheckoutController::class,'ViewBagContent'])->name('ViewBagContent');
-Route::get('YourOrderContent',[CheckoutController::class,'YourOrderContent'])->name('YourOrderContent');
-
-
-
+// Admin Panel Routes Started
 Route::prefix('Admin')->group(function () {
     Route::get('Dashboard', [AuthController::class, 'Dashboard'])->name('Dashboard');
     //Category Routes

@@ -11,7 +11,7 @@
 								<a href="index.html">Home</a>
 							</li>
 							<li class="trail-item trail-end active">
-								Authentication
+                                Sign Up
 							</li>
 						</ul>
 					</div>
@@ -20,8 +20,8 @@
 			<div class="row">
 				<div class="content-area col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="site-main">
-						<h3 class="custom_blog_title">
-							Authentication
+						<h3 class="header-message">
+							Discover Your Fragrance Journey Today!
 						</h3>
 						<div class="customer_login">
 							<div class="row">
@@ -38,10 +38,6 @@
 												<label class="text">Your email</label>
 												<input title="email" id="customer_email" name="customer_email" type="email" class="input-text">
 											</p>
-                                            <p class="form-row form-row-wide">
-                                                <label class="text">Your Contact No</label>
-                                                <input type="text" id="customer_mobile" name="customer_mobile" class="input-text">
-                                            </p>
 											<p class="form-row form-row-wide">
 												<label class="text">Password</label>
 												<input title="pass" type="password" id="customer_password" name="customer_password" class="input-text">

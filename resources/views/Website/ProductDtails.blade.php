@@ -14,84 +14,6 @@
 
 </style>
 
-{{-- <div class="header-device-mobile">
-    <div class="wapper">
-        <div class="item mobile-logo">
-            <div class="logo">
-                <a href="#">
-                    <img src="assets/images/logo.png" alt="img">
-                </a>
-            </div>
-        </div>
-        <div class="item item mobile-search-box has-sub">
-            <a href="#">
-						<span class="icon">
-							<i class="fa fa-search" aria-hidden="true"></i>
-						</span>
-            </a>
-            <div class="block-sub">
-                <a href="#" class="close">
-                    <i class="fa fa-times" aria-hidden="true"></i>
-                </a>
-                <div class="header-searchform-box">
-                    <form class="header-searchform">
-                        <div class="searchform-wrap">
-                            <input type="text" class="search-input" placeholder="Enter keywords to search...">
-                            <input type="submit" class="submit button" value="Search">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="item mobile-settings-box has-sub">
-            <a href="#">
-						<span class="icon">
-							<i class="fa fa-cog" aria-hidden="true"></i>
-						</span>
-            </a>
-            <div class="block-sub">
-                <a href="#" class="close">
-                    <i class="fa fa-times" aria-hidden="true"></i>
-                </a>
-                <div class="block-sub-item">
-                    <h5 class="block-item-title">Currency</h5>
-                    <form class="currency-form stelina-language">
-                        <ul class="stelina-language-wrap">
-                            <li class="active">
-                                <a href="#">
-											<span>
-												English (USD)
-											</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-											<span>
-												French (EUR)
-											</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-											<span>
-												Japanese (JPY)
-											</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="item menu-bar">
-            <a class=" mobile-navigation  menu-toggle" href="#">
-                <span></span>
-                <span></span>
-                <span></span>
-            </a>
-        </div>
-    </div>
-</div> --}}
 <div class="main-content main-content-details single no-sidebar">
     <div class="container">
         <div class="row">
@@ -99,13 +21,12 @@
                 <div class="breadcrumb-trail breadcrumbs">
                     <ul class="trail-items breadcrumb">
                         <li class="trail-item trail-begin">
-                            <a href="index.html">Home</a>
+                            <a href="{{ url('/') }}">Home</a>
                         </li>
                         <li class="trail-item">
-                            <a href="#">Accents</a>
+                            <a href="{{ url('/') }}">Product</a>
                         </li>
                         <li class="trail-item trail-end active">
-                            Glorious Eau
                         </li>
                     </ul>
                 </div>
@@ -348,16 +269,16 @@
                                 </div>
                                 <div class="product-thumb">
                                     <div class="thumb-inner">
-                                        <a href="{{url('ProductDtails')}}/{{$related->product_slug ?? ''}}">
+                                        <a href="{{url('product')}}/{{$related->product_slug ?? ''}}">
                                             <img src="{{config('global.main_url')}}/public/Files/Products/{{$related->product_thumbnail}}" alt="img">
                                         </a>
                                         <div class="thumb-group">
                                             <div class="yith-wcwl-add-to-wishlist">
                                                 <div class="yith-wcwl-add-button">
-                                                    <a href="#">Add to Wishlist</a>
+                                                    <a href="{{url('product')}}/{{$related->product_slug ?? ''}}">Add to Wishlist</a>
                                                 </div>
                                             </div>
-                                            <a href="#" class="button quick-wiew-button">Quick View</a>
+                                            <a href="{{url('product')}}/{{$related->product_slug ?? ''}}" class="button quick-wiew-button">Quick View</a>
                                             <div class="loop-form-add-to-cart">
                                                 <button class="single_add_to_cart_button button">Add to cart
                                                 </button>
@@ -432,7 +353,7 @@
                     }else {
                         window.location.href = "{{ url('/Login') }}";
                     }
-                    
+
                 })
 }
 

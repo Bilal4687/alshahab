@@ -152,15 +152,6 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('CategorySub') }}" class="nav-link">
-                                <i class="nav-icon fas fa-th"></i>
-                                <p>
-                                    Category Sub
-                                </p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
                             <a href="{{ route('Slider') }}" class="nav-link">
                                 <i class="nav-icon fas fa-image"></i>
                                 <p>
@@ -217,6 +208,14 @@
                                 <i class="nav-icon fas fa-cubes"></i>
                                 <p>
                                     Blog
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('AdminLogout') }}" class="nav-link">
+                                <i class="nav-icon fas fa-logout"></i>
+                                <p>
+                                    Logout
                                 </p>
                             </a>
                         </li>

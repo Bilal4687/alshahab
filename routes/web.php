@@ -20,6 +20,10 @@ use App\Http\Controllers\Website\MyAccount\MyAccountController;
 use App\Http\Controllers\Website\Cart\CartController;
 use App\Http\Controllers\Website\Cart\CheckoutController;
 use Illuminate\Support\Facades\DB;
+
+//Middlewares
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\CustomerMiddleware;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -31,6 +35,14 @@ use Illuminate\Support\Facades\DB;
 |
 */
 
+
+// view()->composer(['*'], function ($view) {
+//     $categories = DB::table('categories')->get();
+//     $view->with([
+//         'categories' => $categories
+//     ]);
+// });
+
 View::composer(['*'], function ($view) {
     $categories = DB::table('categories')->get();
     $view->with([
@@ -40,9 +52,48 @@ View::composer(['*'], function ($view) {
 
 
 
+// Route::group(['prefix' => 'Admin', 'middleware'=> 'AdminMiddleware'],function(){
+Route::group(['middleware' => 'CustomerMiddleware'], function () {
+    Route::get('/Checkout', [CheckoutController::class, 'Checkout'])->name('Checkout');
+    Route::post('/CheckoutLoginFlow', [CheckoutController::class, 'CheckoutLoginFlow'])->name('CheckoutLoginFlow');
+    Route::post('/CheckOutDetail', [CheckoutController::class, 'CheckOutDetail'])->name('CheckOutDetail');
+    Route::post('/CheckOutDetailUpdate', [CheckoutController::class, 'CheckOutDetailUpdate'])->name('CheckOutDetailUpdate');
+    Route::post('/PlaceOrder', [CheckoutController::class, 'PlaceOrder'])->name('PlaceOrder');
+
+    Route::post('/CodPlaceOrder', [CheckoutController::class, 'CodPlaceOrder'])->name('CodPlaceOrder');
+    // Route::post('/razorpay.payment.store', [CheckoutController::class, 'RazorPayPayment'])->name('razorpay.payment.store');
+    Route::post('/ProcessRazorPayPayment', [CheckoutController::class, 'ProcessRazorPayPayment'])->name('ProcessRazorPayPayment');
+
+    Route::get('/MyAccount', [MyAccountController::class, 'MyAccount'])->name('MyAccount');
+    Route::post('PrimaryAddressStore', [MyAccountController::class, 'PrimaryAddressStore'])->name('PrimaryAddressStore');
+    Route::get('/ManageAddresses', [MyAccountController::class, 'ManageAddresses'])->name('ManageAddresses');
+    Route::get('/EditAddress/{customer_address_id}/', [MyAccountController::class, 'EditAddress'])->name('EditAddress');
+    Route::get('/OrderHistory', [MyAccountController::class, 'OrderHistory'])->name('OrderHistory');
+    Route::get('/RemoveAddress', [MyAccountController::class, 'RemoveAddress'])->name('RemoveAddress');
+    Route::get('/SetAsDefault', [MyAccountController::class, 'SetAsDefault'])->name('SetAsDefault');
+
+    Route::get('/Invoice', [CheckoutController::class, 'Invoice'])->name('Invoice');
+    Route::get('/OrderConfirm', [CheckoutController::class, 'OrderConfirm'])->name('OrderConfirm');
+});
+
+Route::get('/result/{slug?}/{id?}', [WebsiteController::class, 'products'])->name('result');
+
+// Route::get('/result/{categorySlug?}/{subcategorySlug?}', [WebsiteController::class, 'products'])->name('result');
+// Route::get('/result/{id}', [WebsiteController::class, 'productsByBrands']);
+// Route::get('result/{id}', [WebsiteController::class, 'productsByBrands'])->name('result');
+
+
 //Website Controller Home page
+// Route::get('/result/{categorySlug?}/{subcategorySlug?}/{id?}', [WebsiteController::class, 'products'])
+//     ->where(['categorySlug' => '[\w\-]+', 'subcategorySlug' => '[\w\-]+', 'id' => '[\w\-]+'])
+//     ->name('result');
+
+
 Route::get('/', [WebsiteController::class, 'Home'])->name('Home');
-Route::get('/result/{slug}/', [WebsiteController::class, 'products'])->name('result');
+
+
+Route::get('/GetSalePrice', [WebsiteController::class, 'GetSalePrice'])->name('GetSalePrice');
+// Route::get('/product/{productSlug}/{SubCategorySlug}', [WebsiteController::class, 'productdetails'])->name('product');
 Route::get('/product/{productSlug}/', [WebsiteController::class, 'productdetails'])->name('product');
 Route::get('/ListView/{productSlug}/', [WebsiteController::class, 'ListView'])->name('ListView');
 Route::get('/SortProductByNumber', [WebsiteController::class, 'SortProductByNumber'])->name('SortProductByNumber');
@@ -52,15 +103,19 @@ Route::get('/SortProductByNumber', [WebsiteController::class, 'SortProductByNumb
 Route::post('/AddToCart', [CartController::class, 'AddToCart'])->name('AddToCart');
 Route::get('/ViewCart', [CartController::class, 'ViewCart'])->name('ViewCart');
 Route::get('/RemoveFromCart', [CartController::class, 'RemoveFromCart'])->name('RemoveFromCart');
+
 Route::get('/UpdateCart', [CartController::class, 'UpdateCart'])->name('UpdateCart');
 
 //CheckoutContoller Routes Checkout Page
-Route::get('/Checkout', [CheckoutController::class, 'Checkout'])->name('Checkout');
-Route::post('CheckoutLoginFlow', [CheckoutController::class, 'CheckoutLoginFlow'])->name('CheckoutLoginFlow');
-Route::post('/CheckOutDetail', [CheckoutController::class, 'CheckOutDetail'])->name('CheckOutDetail');
-Route::post('/CheckOutDetailUpdate', [CheckoutController::class, 'CheckOutDetailUpdate'])->name('CheckOutDetailUpdate');
-Route::get('RazorPayPayment', [CheckoutController::class, 'RazorPayPayment'])->name('RazorPayPayment');
-Route::get('/PlaceOrder', [CheckoutController::class, 'PlaceOrder'])->name('PlaceOrder');
+// Route::get('/Checkout', [CheckoutController::class, 'Checkout'])->name('Checkout');
+// Route::post('/CheckoutLoginFlow', [CheckoutController::class, 'CheckoutLoginFlow'])->name('CheckoutLoginFlow');
+// Route::post('/CheckOutDetail', [CheckoutController::class, 'CheckOutDetail'])->name('CheckOutDetail');
+// Route::post('/CheckOutDetailUpdate', [CheckoutController::class, 'CheckOutDetailUpdate'])->name('CheckOutDetailUpdate');
+// Route::post('/PlaceOrder', [CheckoutController::class, 'PlaceOrder'])->name('PlaceOrder');
+
+// Route::post('/CodPlaceOrder', [CheckoutController::class, 'CodPlaceOrder'])->name('CodPlaceOrder');
+// // Route::post('/razorpay.payment.store', [CheckoutController::class, 'RazorPayPayment'])->name('razorpay.payment.store');
+// Route::post('/ProcessRazorPayPayment', [CheckoutController::class, 'ProcessRazorPayPayment'])->name('ProcessRazorPayPayment');
 
 // MyAccountController Routes Handles Login rgistraion of customer
 Route::get('/Login', [MyAccountController::class, 'Login'])->name('Login');
@@ -69,25 +124,42 @@ Route::post('/CustomerLogin', [MyAccountController::class, 'CustomerLogin'])->na
 Route::post('/AddNewCustomer', [MyAccountController::class, 'RegisterCustomer'])->name('AddNewCustomer');
 Route::get('Logout', [MyAccountController::class, 'Logout'])->name('Logout');
 
+// My Account Seciton
+
+
 // Websites Routes Ended Here
 
 
 
 // Admin Panel Routes Started
-Route::prefix('Admin')->group(function () {
+
+Route::get('Admin/Login', [AuthController::class, 'AdminLogin'])->name('AdminLogin');
+Route::get('Admin/Logout', [AuthController::class, 'AdminLogout'])->name('AdminLogout');
+Route::post('Admin/LoginStore', [AuthController::class, 'AdminLoginStore'])->name('AdminLoginStore');
+
+Route::group(['prefix' => 'Admin', 'middleware' => 'AdminMiddleware'], function () {
+
+    //Dashboard Routes
     Route::get('Dashboard', [AuthController::class, 'Dashboard'])->name('Dashboard');
+
     //Category Routes
-    Route::get('Category', [CategoryController::class, 'Category'])->name('Category');
+
     Route::post('CategoryStore', [CategoryController::class, 'CategoryStore'])->name('CategoryStore');
     Route::get('CategoryShow', [CategoryController::class, 'CategoryShow'])->name('CategoryShow');
     Route::get('CategoryEdit', [CategoryController::class, 'CategoryEdit'])->name('CategoryEdit');
+    // routes/web.php
+    // Route::get('FetchSubCategory/{slug}', [CategoryController::class, 'fetchSubCategory'])->name('FetchSubCategory');
+    Route::get('Category', [CategoryController::class, 'Category'])->name('Category');
+    Route::get('Category/{categoryId}', [CategoryController::class, 'SubCategoryShow'])->name('SubCategoryShow');
+    // Route::get('subcategories/{categoryId}', [CategoryController::class, 'SubCategoryShow'])->name('SubCategoryShow');
+
     Route::get('CategoryRemove', [CategoryController::class, 'CategoryRemove'])->name('CategoryRemove');
 
-    Route::get('CategorySub', [CategorySubController::class, 'CategorySub'])->name('CategorySub');
-    Route::get('CategorySubFetch', [CategorySubController::class, 'CategorySubFetch'])->name('CategorySubFetch');
-    Route::get('CategorySubEdit', [CategorySubController::class, 'CategorySubEdit'])->name('CategorySubEdit');
-    Route::get('SubCategoryDelete', [CategorySubController::class, 'SubCategoryDelete'])->name('SubCategoryDelete');
-    Route::post('CategorySubStore', [CategorySubController::class, 'CategorySubStore'])->name('CategorySubStore');
+
+    // Route::get('CategorySubFetch', [CategorySubController::class, 'CategorySubFetch'])->name('CategorySubFetch');
+    // Route::get('CategorySubEdit', [CategorySubController::class, 'CategorySubEdit'])->name('CategorySubEdit');
+    // Route::get('SubCategoryDelete', [CategorySubController::class, 'SubCategoryDelete'])->name('SubCategoryDelete');
+    // Route::post('CategorySubStore', [CategorySubController::class, 'CategorySubStore'])->name('CategorySubStore');
 
     //Slider Routes
     Route::get('/Slider', [SliderController::class, 'Slider'])->name('Slider');
@@ -135,6 +207,7 @@ Route::prefix('Admin')->group(function () {
     Route::get('ProductEdit', [ProductController::class, 'ProductEdit'])->name('ProductEdit');
     Route::get('ProductRemove', [ProductController::class, 'ProductRemove'])->name('ProductRemove');
     Route::get('ProductData/{id}', [ProductController::class, 'ProductData'])->name('ProductData');
+    Route::get('GetChildrenCategory', [ProductController::class, 'GetChildrenCategory'])->name('GetChildrenCategory');
 
     //Blog
     Route::get('Blog', [BlogController::class, 'Blog'])->name('Blog');

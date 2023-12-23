@@ -67,12 +67,12 @@
                         <div class="form-group">
                             <label>Discount Value</label>
                             <input type="number" class="form-control form-control-user required " name="discount_value"
-                                id="discount_type" placeholder="Enter Discount Value">
+                                id="discount_value" placeholder="Enter Discount Value">
                         </div>
                         <div class="form-group">
                             <label>Discount Threshold</label>
                             <input type="number" class="form-control form-control-user required " name="discount_threshold"
-                                id="discount_type" placeholder="Enter Discount Threshold">
+                                id="discount_threshold" placeholder="Enter Discount Threshold">
                         </div>
                     </form>
                 </div>
@@ -116,6 +116,7 @@ $(function() {
                     DataTable.ajax.reload();
                     $("#DiscountStoreModal").modal('hide');
                     $('#DiscountStoreForm')[0].reset();
+                    location.reload();
                 } else if (res.validate) {
                     alertmsg(res.message, "warning")
                 } else {

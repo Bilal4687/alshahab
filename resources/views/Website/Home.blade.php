@@ -1,15 +1,29 @@
 @extends('Website.Layout')
 @section('content')
+<style>
+    .CategoryCard {
+        position: relative;
+        text-align: center;
+    }
 
+    .centered {
+        color: #000;
+        position: absolute;
+        top: 95%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+</style>
 <div class="">
     <div class="fullwidth-template">
         <div class="home-slider fullwidth rows-space-60">
             <div class="slider-owl owl-slick equal-container nav-center equal-container"
-                 data-slick='{"autoplay":true, "autoplaySpeed":10000, "arrows":true, "dots":true, "infinite":true, "speed":800, "rows":1}'
-                 data-responsive='[{"breakpoint":"2000","settings":{"slidesToShow":1}}]'>
+                data-slick='{"autoplay":true, "autoplaySpeed":10000, "arrows":true, "dots":true, "infinite":true, "speed":800, "rows":1}'
+                data-responsive='[{"breakpoint":"2000","settings":{"slidesToShow":1}}]'>
                 @foreach ($sliders as $item)
                 <div class="slider-item style6">
-                    <div class="slider-inner equal-element" style="background-image: url(public/Files/Home-Slider/{{$item->home_slider_path}});background-size: cover; hieght: 100px;">
+                    <div class="slider-inner equal-element"
+                        style="background-image: url(public/Files/Home-Slider/{{$item->home_slider_path}});background-size: cover; hieght: auto">
                         <div class="container">
                             <div class="slider-infor">
                                 <h5 class="title-small">
@@ -29,18 +43,92 @@
                 @endforeach
             </div>
         </div>
-
-        {{-- update  --}}
-       <div class="banner-video-wrapp rows-space-40 type2">
+        <div class="stelina-product produc-featured rows-space-40">
             <div class="container">
+                <h3 class="custommenu-title-blog">
+                    LATEST FRAGRANCES
+                </h3>
+                {{-- @php
+                dd($NewArrivals)
+                @endphp --}}
+                <ul class="row list-products auto-clear equal-container product-grid">
+                    @foreach ($products as $product)
+                    <li
+                    class="product-item product-type-variable col-lg-3 col-md-3 col-sm-6 col-xs-6 col-ts-12 style-1">
+                    <div class="product-inner equal-element">
+
+
+                        <div class="product-top">
+                        </div>
+                        <div class="product-thumb">
+                            <div class="thumb-inner">
+                                <a href="{{ url('product') }}/{{ $product->product_slug }}">
+                                    <img src="{{config('global.main_url')}}/public/Files/Products/{{$product->product_thumbnail}}"
+                                        alt="img" style="width: 250px; height: 250px; align-items: center">
+
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="product-info">
+                            <h5 class="product-name product_title">
+                                <a href="#">{{$product->product_name ?? ""}}</a>
+                            </h5>
+                            <div class="group-info">
+                                <div class="stars-rating">
+                                    <div class="star-rating">
+                                        <span class="star-3"></span>
+                                    </div>
+                                    <div class="count-star">
+                                        (3)
+                                    </div>
+                                </div>
+                                <div class="price">
+                                    <del>
+                                        {{$product->mrp_price ?? ''}}
+                                    </del>
+                                    <ins class="h5" style="color: #ab8e66;">
+                                        <strong>₹{{$product->sale_price ?? ''}}</strong>
+                                    </ins>
+
+
+                                </div>
+                                <div style="margin-top: 10px">
+                                    <form id="addToCart">
+                                        @csrf
+                                        <input type="hidden" id="product_id" , name="product_id"
+                                            value="{{ $product->product_id }}">
+                                        <button class="btn-custom btn"><i class="fa fa-heart"></i></button>
+                                        <button type="button" class="btn-custom btn" id="btnAddToCart"
+                                            class="single_add_to_cart_button button" onclick="AddToCart()">Add
+                                            to cart</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+        {{-- update --}}
+
+        {{-- <div class="banner-video-wrapp rows-space-40 type2">
+            <div class="container">
+
+
+
                 <div class="row">
                     <div class="col-lg-6">
-                        <div class="banner" >
+                        <div class="banner">
                             <div class="item-banner style9">
-                                <div class="inner" style="background-image: url(public/assets/image/image_4.jpg); background-size: cover;">
+                                <div class="inner"
+                                    style="background-image: url(public/assets/image/image_4.jpg); background-size: cover;">
                                     <div class="banner-content">
                                         <h4 class="stelina-subtitle">Hurry up</h4>
-                                        <h3 class="title">Big Sale To <br/> 30% Off</h3>
+                                        <h3 class="title">Big Sale To <br /> 30% Off</h3>
                                         <div class="code">
                                             Use promo Code:
                                             <span class="nummer-code">STELINA</span>
@@ -54,10 +142,11 @@
                     <div class="col-lg-6">
                         <div class="banner">
                             <div class="item-banner style9 type1">
-                                <div class="inner" style="background-image: url(public/assets/image/image_6.jpg); background-size: cover;">
+                                <div class="inner"
+                                    style="background-image: url(public/assets/image/image_6.jpg); background-size: cover;">
                                     <div class="banner-content">
                                         <h4 class="stelina-subtitle">Sale Up to 50% Off</h4>
-                                        <h3 class="title"> Get daily <br/> update</h3>
+                                        <h3 class="title"> Get daily <br /> update</h3>
                                         <div class="code">
                                             Use promo Code:
                                             <span class="nummer-code">STELINA</span>
@@ -70,20 +159,21 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
-        {{-- New Arrivals  --}}
-        <div class="stelina-product produc-featured rows-space-40">
+        {{-- New Arrivals --}}
+        {{-- <div class="stelina-product produc-featured rows-space-40">
             <div class="container">
                 <h3 class="custommenu-title-blog">
                     New Arrivals
                 </h3>
-                    {{-- @php
-                        dd($NewArrivals)
-                    @endphp --}}
-                <ul class="row list-products auto-clear equal-container product-grid">
-                    @foreach ($NewArrivals as $New)
-                    <li class="product-item product-type-variable col-lg-3 col-md-4 col-sm-6 col-xs-6 col-ts-12 style-1">
+                {{-- @php
+                dd($NewArrivals)
+                @endphp --}}
+                {{-- <ul class="row list-products auto-clear equal-container product-grid">
+                    @foreach ($NewArrivals as $product)
+                    <li
+                        class="product-item product-type-variable col-lg-3 col-md-4 col-sm-6 col-xs-6 col-ts-12 style-1">
                         <div class="product-inner equal-element">
                             <div class="product-top">
                                 <div class="flash">
@@ -95,16 +185,18 @@
                             <div class="product-thumb">
                                 <div class="thumb-inner">
 
-                                    <a href="{{url('product')}}/{{$New->product_slug ?? ''}}">
-                                      <img src="public/Files/Products/{{$New->product_thumbnail}}" alt="img">
+                                    <a href="{{url('product')}}/{{$product->product_slug ?? ''}}">
+                                        <img src="public/Files/Products/{{$product->product_thumbnail}}" alt="img">
                                     </a>
                                     <div class="thumb-group">
                                         <div class="yith-wcwl-add-to-wishlist">
                                             <div class="yith-wcwl-add-button">
-                                                <a href="{{url('product')}}/{{$New->product_slug ?? ''}}">Add to Wishlist</a>
+                                                <a href="{{url('product')}}/{{$product->product_slug ?? ''}}">Add to
+                                                    Wishlist</a>
                                             </div>
                                         </div>
-                                        <a href="{{url('product')}}/{{$New->product_slug ?? ''}}" class="button quick-wiew-button">Quick View</a>
+                                        <a href="{{url('product')}}/{{$product->product_slug ?? ''}}"
+                                            class="button quick-wiew-button">Quick View</a>
                                         <div class="loop-form-add-to-cart">
                                             <button class="single_add_to_cart_button button">Add to cart
                                             </button>
@@ -114,7 +206,7 @@
                             </div>
                             <div class="product-info">
                                 <h5 class="product-name product_title">
-                                    <a href="#">{{$New->product_name}}</a>
+                                    <a href="#">{{$product->product_name}}</a>
                                 </h5>
                                 <div class="group-info">
                                     <div class="stars-rating">
@@ -122,25 +214,25 @@
                                             <span class="star-4"></span>
                                         </div>
                                     </div>
-                                        <div class="price">
-                                            <del>
-                                                {{$New->pricing[0]->mrp_price ?? ''}}
-                                            </del>
-                                            <ins>
-                                                {{$New->pricing[0]->sale_price ?? ''}}
-                                            </ins>
-                                        </div>
+                                    <div class="price">
+                                        <del>
+                                            {{$product->pricing[0]->mrp_price ?? ''}}
+                                        </del>
+                                        <ins>
+                                            {{$product->pricing[0]->sale_price ?? ''}}
+                                        </ins>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </li>
                     @endforeach
-                </ul>
-            </div>
-        </div>
+                </ul> --}}
+            {{-- </div>
+        </div> --}}
 
-        {{-- Collection Sale  --}}
-        <div class="banner-pinmap-wrapp rows-space-70">
+        {{-- Collection Sale --}}
+        {{-- <div class="banner-pinmap-wrapp rows-space-70">
             <div>
                 <div class="banner">
                     <div class="item-banner style21">
@@ -149,7 +241,7 @@
                                 <div class="banner-content-inner">
                                     <h4 class="stelina-subtitle">Style your chair</h4>
                                     <h3 class="title">
-                                        Collection<br/>
+                                        Collection<br />
                                         Sale <span>15%</span> Off
                                     </h3>
                                     <div class="start-from">
@@ -162,9 +254,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
-        {{-- NewLatter  --}}
+        {{-- NewLatter --}}
         <div class="stelina-testimonials-newsletter-wrapp">
             <div class="container">
                 <div class="row">
@@ -172,8 +264,8 @@
                         <div class="stelina-testimonials-wrapp">
                             <div class="stelina-testimonials default">
                                 <div class="owl-slick equal-container"
-                                     data-slick='{"autoplay":false, "autoplaySpeed":1000, "arrows":false, "dots":true, "infinite":true, "speed":800}'
-                                     data-responsive='[{"breakpoint":"2000","settings":{"slidesToShow":1}}]'>
+                                    data-slick='{"autoplay":false, "autoplaySpeed":1000, "arrows":false, "dots":true, "infinite":true, "speed":800}'
+                                    data-responsive='[{"breakpoint":"2000","settings":{"slidesToShow":1}}]'>
                                     <div class="testimonial-item">
                                         <div class="image">
                                             <img src="public/assets/images/testimonial-1.png" alt="img">
@@ -185,9 +277,12 @@
                                             </h5>
                                             <div class="text">
                                                 <p>
-                                                    Lorem ipsum dolor sit amet consectetur adipiscing elit diam consequat est,
-                                                    eleifend conubia himenaeos ac vel cursus interdum eu varius non nam, scelerisque
-                                                    eros rhoncus nascetur porttitor urna nisi gravida lacinia. Quam dictumst non bibendum
+                                                    Lorem ipsum dolor sit amet consectetur adipiscing elit diam
+                                                    consequat est,
+                                                    eleifend conubia himenaeos ac vel cursus interdum eu varius non nam,
+                                                    scelerisque
+                                                    eros rhoncus nascetur porttitor urna nisi gravida lacinia. Quam
+                                                    dictumst non bibendum
                                                     venenatis malesuada nec lacinia volutpat ante
                                                 </p>
                                             </div>
@@ -204,9 +299,12 @@
                                             </h5>
                                             <div class="text">
                                                 <p>
-                                                    Lorem ipsum dolor sit amet consectetur adipiscing elit diam consequat est,
-                                                    eleifend conubia himenaeos ac vel cursus interdum eu varius non nam, scelerisque
-                                                    eros rhoncus nascetur porttitor urna nisi gravida lacinia. Quam dictumst non bibendum
+                                                    Lorem ipsum dolor sit amet consectetur adipiscing elit diam
+                                                    consequat est,
+                                                    eleifend conubia himenaeos ac vel cursus interdum eu varius non nam,
+                                                    scelerisque
+                                                    eros rhoncus nascetur porttitor urna nisi gravida lacinia. Quam
+                                                    dictumst non bibendum
                                                     venenatis malesuada nec lacinia volutpat ante
                                                 </p>
                                             </div>
@@ -217,14 +315,15 @@
                         </div>
                     </div>
                     <div class="col-lg-3">
-                        <div class="stelina-newsletter default" style="background-image: url(public/assets/image/images_3.jpg); background-size: cover;">
+                        <div class="stelina-newsletter default"
+                            style="background-image: url(public/assets/image/images_3.jpg); background-size: cover;">
                             <div class="newsletter-head">
                                 <h3 class="title">Newsletter</h3>
                                 <div class="subtitle">Get more special Deals, Events & Promotions</div>
                             </div>
                             <div class="newsletter-form-wrap">
                                 <input class="input-text email email-newsletter" type="email" name="email"
-                                       placeholder="Your email here...">
+                                    placeholder="Your email here...">
                                 <button class="button btn-submit submit-newsletter">Submit</button>
                             </div>
                         </div>
@@ -240,11 +339,12 @@
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                         <div class="banner">
                             <div class="item-banner style16">
-                                <div class="inner" style="background-image: url(public/assets/image/image_7.jpg);background-size: cover;">
+                                <div class="inner"
+                                    style="background-image: url(public/assets/image/image_7.jpg);background-size: cover;">
                                     <div class="banner-content">
-                                        <h3 class="title">Products for <br/>choose</h3>
+                                        <h3 class="title">Products for <br />choose</h3>
                                         <div class="description" style="color: white">
-                                            Wheel Collections <br/>New Arrivals
+                                            Wheel Collections <br />New Arrivals
                                         </div>
                                         <a href="#" class="button btn-view-the-look">Shop now</a>
                                     </div>
@@ -255,11 +355,12 @@
                     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
                         <div class="banner">
                             <div class="item-banner style15">
-                                <div class="inner" style="background-image: url(public/assets/image/image_10.jpg); background-size: cover;">
+                                <div class="inner"
+                                    style="background-image: url(public/assets/image/image_10.jpg); background-size: cover;">
                                     <div class="banner-content">
                                         <h3 class="title">Summer Super Sale</h3>
                                         <div class="description" style="color: rgb(199, 197, 197);">
-                                            Stelina style, day by day <br/>functionality!
+                                            Stelina style, day by day <br />functionality!
                                         </div>
                                         <a href="#" class="button btn-view-the-look">Shop now</a>
                                     </div>
@@ -272,8 +373,8 @@
         </div>
         {{-- ================== --}}
 
-        {{-- weekly featured  --}}
-        <div class="stelina-product layout1">
+        {{-- weekly featured --}}
+        {{-- <div class="stelina-product layout1">
             <div class="container">
                 <div class="container-wapper">
                     <div class="head">
@@ -281,74 +382,75 @@
                         <div class="subtitle">Let’s Shop our featured item this week</div>
                     </div>
                     <div class="product-list-owl owl-slick equal-container nav-center-left"
-                         data-slick='{"autoplay":false, "autoplaySpeed":1000, "arrows":true, "dots":false, "infinite":true, "speed":800,"infinite":false}'
-                         data-responsive='[{"breakpoint":"2000","settings":{"slidesToShow":3}},{"breakpoint":"1200","settings":{"slidesToShow":2}},{"breakpoint":"992","settings":{"slidesToShow":1}},{"breakpoint":"768","settings":{"slidesToShow":2}},{"breakpoint":"481","settings":{"slidesToShow":1}}]'>
-                         @foreach ($Weekly as $item)
-                         <div class="product-item style-1 product-type-variable">
-                             <div class="product-inner equal-element">
-                                 <div class="product-top">
-                                     <div class="flash">
-                                             <span class="onnew">
-                                                 <span class="text">
-                                                     new
-                                                 </span>
-                                             </span>
-                                     </div>
-                                 </div>
-                                 <div class="product-thumb">
-                                     <div class="thumb-inner">
-                                         <a href="{{url('product')}}/{{$New->product_slug}}">
-                                             <img src="public/Files/Products/{{$New->product_thumbnail}}" alt="img">
-                                         </a>
-                                         <div class="thumb-group">
-                                             <div class="yith-wcwl-add-to-wishlist">
-                                                 <div class="yith-wcwl-add-button">
-                                                     <a href="#">Add to Wishlist</a>
-                                                 </div>
-                                             </div>
-                                             <a href="{{url('productdetails')}}/{{$New->product_slug}}" class="button quick-wiew-button">Quick View</a>
-                                             <div class="loop-form-add-to-cart">
-                                                 <button class="single_add_to_cart_button button">Add to cart
-                                                 </button>
-                                             </div>
-                                         </div>
-                                     </div>
-                                 </div>
-                                 <div class="product-info">
-                                     <h5 class="product-name product_title">
-                                         <a href="#">{{$New->product_name}}</a>
-                                     </h5>
-                                     <div class="group-info">
-                                         <div class="stars-rating">
-                                             <div class="star-rating">
-                                                 <span class="star-3"></span>
-                                             </div>
-                                             <div class="count-star">
-                                                 (3)
-                                             </div>
-                                         </div>
-                                         {{-- <div class="price">
-                                             <del>
-                                                {{$New->mrp_price}}
-                                             </del>
-                                             <ins>
-                                                 {{$New->sale_price}}
-                                             </ins>
-                                         </div> --}}
-                                     </div>
-                                 </div>
-                             </div>
-                         </div>
-                         @endforeach
+                        data-slick='{"autoplay":false, "autoplaySpeed":1000, "arrows":true, "dots":false, "infinite":true, "speed":800,"infinite":false}'
+                        data-responsive='[{"breakpoint":"2000","settings":{"slidesToShow":3}},{"breakpoint":"1200","settings":{"slidesToShow":2}},{"breakpoint":"992","settings":{"slidesToShow":1}},{"breakpoint":"768","settings":{"slidesToShow":2}},{"breakpoint":"481","settings":{"slidesToShow":1}}]'>
+                        @foreach ($Weekly as $item)
+                        <div class="product-item style-1 product-type-variable">
+                            <div class="product-inner equal-element">
+                                <div class="product-top">
+                                    <div class="flash">
+                                        <span class="onnew">
+                                            <span class="text">
+                                                new
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="product-thumb">
+                                    <div class="thumb-inner">
+                                        <a href="{{url('product')}}/{{$product->product_slug}}">
+                                            <img src="public/Files/Products/{{$product->product_thumbnail}}" alt="img">
+                                        </a>
+                                        <div class="thumb-group">
+                                            <div class="yith-wcwl-add-to-wishlist">
+                                                <div class="yith-wcwl-add-button">
+                                                    <a href="#">Add to Wishlist</a>
+                                                </div>
+                                            </div>
+                                            <a href="{{url('productdetails')}}/{{$product->product_slug}}"
+                                                class="button quick-wiew-button">Quick View</a>
+                                            <div class="loop-form-add-to-cart">
+                                                <button class="single_add_to_cart_button button">Add to cart
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="product-info">
+                                    <h5 class="product-name product_title">
+                                        <a href="#">{{$product->product_name}}</a>
+                                    </h5>
+                                    <div class="group-info">
+                                        <div class="stars-rating">
+                                            <div class="star-rating">
+                                                <span class="star-3"></span>
+                                            </div>
+                                            <div class="count-star">
+                                                (3)
+                                            </div>
+                                        </div> --}}
+                                        {{-- <div class="price">
+                                            <del>
+                                                {{$product->mrp_price}}
+                                            </del>
+                                            <ins>
+                                                {{$product->sale_price}}
+                                            </ins>
+                                        </div> --}}
+                                    {{-- </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach --}}
                         {{-- <div class="product-item style-1">
                             <div class="product-inner equal-element">
                                 <div class="product-top">
                                     <div class="flash">
-												<span class="onnew">
-													<span class="text">
-														new
-													</span>
-												</span>
+                                        <span class="onnew">
+                                            <span class="text">
+                                                new
+                                            </span>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="product-thumb">
@@ -399,11 +501,11 @@
                             <div class="product-inner equal-element">
                                 <div class="product-top">
                                     <div class="flash">
-												<span class="onnew">
-													<span class="text">
-														new
-													</span>
-												</span>
+                                        <span class="onnew">
+                                            <span class="text">
+                                                new
+                                            </span>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="product-thumb">
@@ -454,11 +556,11 @@
                             <div class="product-inner equal-element">
                                 <div class="product-top">
                                     <div class="flash">
-												<span class="onnew">
-													<span class="text">
-														new
-													</span>
-												</span>
+                                        <span class="onnew">
+                                            <span class="text">
+                                                new
+                                            </span>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="product-thumb">
@@ -509,11 +611,11 @@
                             <div class="product-inner equal-element">
                                 <div class="product-top">
                                     <div class="flash">
-												<span class="onnew">
-													<span class="text">
-														new
-													</span>
-												</span>
+                                        <span class="onnew">
+                                            <span class="text">
+                                                new
+                                            </span>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="product-thumb">
@@ -564,11 +666,11 @@
                             <div class="product-inner equal-element">
                                 <div class="product-top">
                                     <div class="flash">
-												<span class="onnew">
-													<span class="text">
-														new
-													</span>
-												</span>
+                                        <span class="onnew">
+                                            <span class="text">
+                                                new
+                                            </span>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="product-thumb">
@@ -615,12 +717,12 @@
                                 </div>
                             </div>
                         </div> --}}
-                    </div>
+                    {{-- </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
-        {{-- OUR LATEST NEWS  --}}
+        {{-- OUR LATEST NEWS --}}
         <div class="stelina-blog-wraap default">
             <div class="container">
                 <h3 class="custommenu-title-blog">
@@ -628,14 +730,15 @@
                 </h3>
                 <div class="stelina-blog style2">
                     <div class="owl-slick equal-container nav-center"
-                         data-slick='{"autoplay":false, "autoplaySpeed":1000, "arrows":false, "dots":true, "infinite":true, "speed":800, "rows":1}'
-                         data-responsive='[{"breakpoint":"2000","settings":{"slidesToShow":2}},{"breakpoint":"1200","settings":{"slidesToShow":1}},{"breakpoint":"992","settings":{"slidesToShow":1}},{"breakpoint":"768","settings":{"slidesToShow":1}},{"breakpoint":"481","settings":{"slidesToShow":1}}]'>
+                        data-slick='{"autoplay":false, "autoplaySpeed":1000, "arrows":false, "dots":true, "infinite":true, "speed":800, "rows":1}'
+                        data-responsive='[{"breakpoint":"2000","settings":{"slidesToShow":2}},{"breakpoint":"1200","settings":{"slidesToShow":1}},{"breakpoint":"992","settings":{"slidesToShow":1}},{"breakpoint":"768","settings":{"slidesToShow":1}},{"breakpoint":"481","settings":{"slidesToShow":1}}]'>
                         @foreach ($blogs as $item)
-                            <div class="stelina-blog-item equal-element style2">
+                        <div class="stelina-blog-item equal-element style2">
                             <div class="stelina-blog-inner">
                                 <div class="post-thumb">
                                     <a href="#">
-                                        <img src="public/Files/Blog/{{$item->image}}" alt="img" style="background-size: cover;width: 230px; height: 300px;">
+                                        <img src="public/Files/Blog/{{$item->image}}" alt="img"
+                                            style="background-size: cover;width: 230px; height: 300px;">
                                     </a>
                                 </div>
                                 <div class="blog-info">
@@ -673,23 +776,23 @@
                                     </h2>
                                     <div class="blog-meta">
                                         <div class="blog-meta-wrapp">
-                                                <span class="author">
-                                                    <img src="public/assets/images/avt-blog1.png" alt="img">
-                                                    Guessmyscent
-                                                </span>
+                                            <span class="author">
+                                                <img src="public/assets/images/avt-blog1.png" alt="img">
+                                                Guessmyscent
+                                            </span>
                                             <span class="view">
-                                                    <i class="icon fa fa-eye" aria-hidden="true"></i>
-                                                    631
-                                                </span>
+                                                <i class="icon fa fa-eye" aria-hidden="true"></i>
+                                                631
+                                            </span>
                                             <span class="comment">
-                                                    <i class="icon fa fa-commenting" aria-hidden="true"></i>
-                                                    84
-                                                </span>
+                                                <i class="icon fa fa-commenting" aria-hidden="true"></i>
+                                                84
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            </div>
+                        </div>
                         @endforeach
                         {{-- <div class="stelina-blog-item equal-element style2">
                             <div class="stelina-blog-inner">
@@ -732,18 +835,18 @@
                                     </h2>
                                     <div class="blog-meta">
                                         <div class="blog-meta-wrapp">
-												<span class="author">
-													<img src="public/assets/images/avt-blog1.png" alt="img">
-													Guessmyscent
-												</span>
+                                            <span class="author">
+                                                <img src="public/assets/images/avt-blog1.png" alt="img">
+                                                Guessmyscent
+                                            </span>
                                             <span class="view">
-													<i class="icon fa fa-eye" aria-hidden="true"></i>
-													631
-												</span>
+                                                <i class="icon fa fa-eye" aria-hidden="true"></i>
+                                                631
+                                            </span>
                                             <span class="comment">
-													<i class="icon fa fa-commenting" aria-hidden="true"></i>
-													84
-												</span>
+                                                <i class="icon fa fa-commenting" aria-hidden="true"></i>
+                                                84
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -790,18 +893,18 @@
                                     </h2>
                                     <div class="blog-meta">
                                         <div class="blog-meta-wrapp">
-												<span class="author">
-													<img src="public/assets/images/avt-blog1.png" alt="img">
-													Guessmyscent
-												</span>
+                                            <span class="author">
+                                                <img src="public/assets/images/avt-blog1.png" alt="img">
+                                                Guessmyscent
+                                            </span>
                                             <span class="view">
-													<i class="icon fa fa-eye" aria-hidden="true"></i>
-													631
-												</span>
+                                                <i class="icon fa fa-eye" aria-hidden="true"></i>
+                                                631
+                                            </span>
                                             <span class="comment">
-													<i class="icon fa fa-commenting" aria-hidden="true"></i>
-													84
-												</span>
+                                                <i class="icon fa fa-commenting" aria-hidden="true"></i>
+                                                84
+                                            </span>
                                         </div>
                                     </div>
                                 </div>

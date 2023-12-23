@@ -21,13 +21,14 @@ class DiscountController extends Controller
 
         $Discount_id = $req->input('discount_id');
         $data = $req->input();
+
         unset($data['_token']);
 
         $validator = Validator::make($req->all(),[
             'discount_coupon' => 'required',
             'discount_type' => 'required',
-            'discount_value' => 'required',
-            'discount_threshold' => 'required'
+            'discount_value' => 'required|numeric',
+            'discount_threshold' => 'required|numeric'
         ]);
 
         if ($validator->fails()) {

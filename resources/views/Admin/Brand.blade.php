@@ -55,19 +55,19 @@
                         @csrf
                         <input type="text" style="display: none" id="brand_id" name="brand_id">
                         <div class="form-group">
-                            <label>brand Name</label>
+                            <label>Brand Name</label>
                             <input type="text" class="form-control form-control-user required " name="brand_name"
-                                id="brand_name" placeholder="Enter Attribute Name">
+                                id="brand_name" placeholder="Enter Brand Name">
                         </div>
                         <div class="form-group">
-                            <label>language</label>
+                            <label>Language</label>
                             <input type="text" class="form-control form-control-user required " name="lang"
-                                id="lang" placeholder="Enter Attribute Type">
+                                id="lang" placeholder="Enter Language">
                         </div>
                         <div class="form-group mb-3">
                             <label>Brand Image</label>
                             <input type="file" accept="image/*" class="form-control" name="brand_image"
-                                id="brand_image_input">
+                                id="brand_image">
                             <div class="mt-3" id="image_preview"
                                 style="width: 100%; height: 300px; background: rgb(151, 151, 151) center / contain no-repeat;">
                             </div>
@@ -96,9 +96,6 @@ $(document).ready(function() {
                 {data: 'brand_id', render: (id) => {return `<button class="btn btn-primary mx-1" onclick="BrandEdit('${id}')" ><i class="fa fa-edit"></i></button><button class="btn btn-danger mx-1" onclick="BrandRemove('${id}')"><i class="fa fa-trash"></i></button>`;}
             }
             ])
-            product_variation_name
-
-
         });
 
          function BrandStore() {
@@ -117,6 +114,7 @@ $(document).ready(function() {
                         $("#home_brand_description").summernote('code', "")
                         $('#image_preview').css('background-image', `url('')`);
                         swal("Success!", res.message, "success");
+                        location.reload();
                     } else if (res.validate) {
                         alertmsg(res.message, "warning")
                     } else {
@@ -151,5 +149,20 @@ $(document).ready(function() {
                 });
         })
     }
+    $('#brand_image').on('change', (e) => {
+            $('#image_preview').css({'background-image': ``});
+            const reader = new FileReader();
+            const file = e.target.files[0];
+            if (!file.type.match('image.*')) {
+                swal("Warning", "Please select an image file.", "warning");
+                return $('#brand_image').val('');
+            }
+            reader.onload = function(e) {
+                // $('#image_preview').css({'background-image': ``});
+
+                $('#image_preview').css('background-image', `url(${e.target.result})`);
+            };
+            reader.readAsDataURL(file);
+        });
     </script>
 @endsection

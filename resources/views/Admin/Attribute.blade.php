@@ -28,8 +28,8 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>Attribute Name</th>
                                 <th>Attribute Type</th>
+                                <th>Attribute Name</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -54,14 +54,14 @@
                         @csrf
                         <input type="text" style="display: none" id="attribute_id" name="attribute_id">
                         <div class="form-group">
-                            <label>Attribute Name</label>
-                            <input type="text" class="form-control form-control-user required " name="attribute_name"
-                                id="attribute_name" placeholder="Enter Attribute Name">
-                        </div>
-                        <div class="form-group">
                             <label>Attribute Type</label>
                             <input type="text" class="form-control form-control-user required " name="attribute_type"
                                 id="attribute_type" placeholder="Enter Attribute Type">
+                        </div>
+                        <div class="form-group">
+                            <label>Attribute Name</label>
+                            <input type="text" class="form-control form-control-user required " name="attribute_name"
+                                id="attribute_name" placeholder="Enter Attribute Name">
                         </div>
                     </form>
                 </div>
@@ -83,9 +83,9 @@ $(function() {
         [{
             data: 'attribute_id'
         }, {
-            data: 'attribute_name'
-        }, {
             data: 'attribute_type'
+        }, {
+            data: 'attribute_name'
         }, {
             data: 'attribute_id',
             render: (id) => {
@@ -103,6 +103,7 @@ $(function() {
                     DataTable.ajax.reload();
                     $("#AttributeStoreModal").modal('hide');
                     $('#AttributeStoreForm')[0].reset();
+                    location.reload();
                 } else if (res.validate) {
                     alertmsg(res.message, "warning")
                 } else {

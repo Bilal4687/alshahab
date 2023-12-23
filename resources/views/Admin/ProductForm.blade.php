@@ -22,19 +22,27 @@
                             <div class="form-group">
                                 <label for="brand_id">Brand</label>
                                 <select class="form-control" id="brand_id" name="brand_id" required>
-                                    <option value="">Select a brand</option>
+                                    <option value="">Select Brand</option>
                                     @foreach ($brands as $brand)
                                         <option value="{{ $brand->brand_id }}">{{ $brand->brand_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="category_id">Category</label>
-                                <select class="form-control" id="category_id" name="category_id" required>
-                                    <option value="">Select a brand</option>
+                                <label for="category">Category</label>
+                                <select class="form-control" id="category" name="category"  required>
+                                    <option value="">Select Category</option>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->category_id }}">{{ $category->category_name }}</option>
+                                        @if($category->parent_id === 0)
+                                        <option value="{{ $category->category_id }}" >{{ $category->category_name }}</option>
+                                        @endif
                                     @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="category_id">Sub Category</label>
+                                <select class="form-control" id="category_id" name="category_id" required>
+                                    <option value="" >Select Sub Category</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -95,5 +103,27 @@
                 });
                 $("#submitbtn").prop('disabled', false)
             }
+            $('#category').on('change', function(e) {
+                var id = $('#category').val();
+                $.ajax({
+                    url: "{{ 'GetChildrenCategory' }}",
+                    type: 'GET',
+                    data : {
+                        parentCategoryId : id
+                    },
+                    success: function(response) {
+                        var subCategorySelect = $('#category_id');
+                        subCategorySelect.empty().append('<option value="">Select Sub Category</option>');
+
+                        // Populate the subcategories dropdown with the fetched data
+                        $.each(response, function(index, subcategory) {
+                            subCategorySelect.append('<option value="' + subcategory.category_id + '">' + subcategory.category_name + '</option>');
+                        });
+                    },
+                    error: function(error) {
+                        console.error('Error fetching subcategories: ' + JSON.stringify(error));
+                    }
+                });
+            })
         </script>
     @endsection

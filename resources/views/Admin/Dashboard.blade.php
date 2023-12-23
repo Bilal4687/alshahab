@@ -28,7 +28,7 @@
         <div class="small-box bg-info">
           <div class="inner">
             <h3>{{$category}}</h3>
-
+            <p></p>
             <p>Category</p>
           </div>
           <div class="icon">

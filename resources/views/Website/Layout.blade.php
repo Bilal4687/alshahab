@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel="shortcut icon" type="image/x-icon" href="{{url('public/assets/images/favicon.png/')}}">
     <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{url('public/assets/css/bootstrap.min.css')}}">
@@ -59,7 +60,10 @@
 </head>
 <body class="home">
 
-
+@php
+    use App\Helpers\CartHelper;
+    // other use statements
+@endphp
 
 <header class="header style2">
     <div class="top-bar">
@@ -97,16 +101,14 @@
                 </div>
 
                 <ul class="header-user-links">
-                    @if(Session::get('id'))
-                        <a>{{ Session::get('name') }}</a>
+                    @if(Session::get('customer_id'))
                         <ul class="header-user-links">
-                            <li><a href="{{ url('Logout') }}">Logout</a></li>
+                            <li><a href="{{ url('MyAccount') }}">MyAccount</a></li>
+                            {{-- <li><a href="{{ url('Logout') }}">Logout</a></li> --}}
                         </ul>
                         @else
                     <li>
                         <a href="{{ url('Login') }}">Login</a>
-                         or
-                         <a href="{{ url('Signup') }}">Sign Up</a>
                     </li>
                     @endif
                 </ul>
@@ -114,12 +116,12 @@
         </div>
     </div>
     <div class="container">
-        <div class="main-header">
+        <div class="main-header" style="padding: 0px">
             <div class="row">
                 <div class="col-lg-4 col-sm-6 col-md-4 col-xs-7 col-ts-12 header-element">
                     <div class="block-search-block">
                         <form class="form-search">
-                            <div class="form-content">
+                            <div class="form-content" style="margin-top: 30px">
                                 <div class="inner">
                                     <input type="text" class="input" name="s" value="" placeholder="Search here">
                                     <button class="btn-search" type="submit">
@@ -139,27 +141,30 @@
                 </div>
                 <div class="col-lg-4 col-sm-12 col-md-4 col-xs-12 col-ts-12">
                     <div class="header-control">
-                        <div class="block-minicart stelina-mini-cart block-header stelina-dropdown">
+                        <div class="block-minicart stelina-mini-cart block-header stelina-dropdown" style="margin-top: 30px">
 
                             <a href="javascript:void(0);" class="shopcart-icon flash-cart" data-stelina="stelina-dropdown">
+                                <i class="fa-regular fa-cart-shopping fa-flip"></i>
                                 Cart
                                 <span class="count" id="cart-count">
                                     @php
                                     $cartItems = App\Helpers\CartHelper::getCart();
                                     $cartItemCount = 0;
 
-                                    if (is_array($cartItems)) {
+                                    if (is_array($cartItems) && !empty($cartItems)) {
+                                        // If it's an array and not empty, assume it's the cart array
                                         $cartItemCount = count($cartItems);
+                                    } elseif (is_array($cartItems) && empty($cartItems)) {
+                                        // If it's an empty array, it means the user is not logged in
+                                        $cartItemCount = 0;
                                     } elseif (is_object($cartItems)) {
+                                        // If it's an object, assume it's a structured cart object
                                         $cartItemCount = count($cartItems->items);
                                     }
                                     @endphp
-                                 <p>{{ $cartItemCount }}</p>
+                                    <p>{{ $cartItemCount }}</p>
                                 </span>
                             </a>
-
-
-
 
                             <div class="shopcart-description stelina-submenu">
                                 <div class="content-wrap">
@@ -167,6 +172,7 @@
                                     <ul class="minicart-items">
 
                                         @php
+
                                             $cartItems = App\Helpers\CartHelper::getCart();
 
                                         @endphp
@@ -264,21 +270,32 @@
         <div class="container">
             <div class="header-nav-wapper main-menu-wapper">
                 <div class="header-nav">
-                    <div class="container-wapper">
-                        <ul class="stelina-clone-mobile-menu stelina-nav main-menu " id="menu-main-menu">
-                            <li class="menu-item">
-                                <a href="{{url('/')}}" class="stelina-menu-item-title" title="Home">Home</a>
-                            </li>
-                            @foreach ($categories as $category)
-                            @if ($category->parent_id == 0)
-                                <li class="menu-item menu-item-has-children">
-                                    <a href="{{ url('result') }}/{{ $category->slug }}" class="stelina-menu-item-title" title="Home">{{ $category->category_name }}</a>
-                                    <span class="toggle-submenu"></span>
+
+<div class="container-wapper">
+    <ul class="stelina-clone-mobile-menu stelina-nav main-menu" id="menu-main-menu">
+        <li class="menu-item">
+            <a href="{{ url('/') }}" class="stelina-menu-item-title" title="Home">Home</a>
+        </li>
+
+        @foreach ($categories as $category)
+            @if ($category->parent_id == 0)
+                <li class="menu-item menu-item-has-children">
+                    <a class="stelina-menu-item-title" title="{{ $category->category_name }}">{{ $category->category_name }}</a>
+                    <span class="toggle-submenu"></span>
+                    <ul class="submenu">
+                        @foreach ($categories as $subcategory)
+                            @if ($subcategory->parent_id == $category->category_id)
+                                <li class="menu-item menu-item-has-grandchildren">
+                                    <a href="{{ url('result', $subcategory->slug) }}">
+                                        {{ $subcategory->category_name }}
+                                    </a>
                                     <ul class="submenu">
-                                        @foreach ($categories as $subcategory)
-                                            @if ($subcategory->parent_id == $category->category_id)
+                                        @foreach ($categories as $grandchild)
+                                            @if ($grandchild->parent_id == $subcategory->category_id)
                                                 <li class="menu-item">
-                                                    <a href="{{ url('result') }}/{{ $category->slug }}">{{ $subcategory->category_name }}</a>
+                                                    <a href="{{ url('result', $grandchild->slug) }}">
+                                                        {{ $grandchild->category_name }}
+                                                    </a>
                                                 </li>
                                             @endif
                                         @endforeach
@@ -286,9 +303,12 @@
                                 </li>
                             @endif
                         @endforeach
-
-                        </ul>
-                    </div>
+                    </ul>
+                </li>
+            @endif
+        @endforeach
+    </ul>
+</div>
                 </div>
             </div>
         </div>
@@ -558,45 +578,26 @@
     $("#error").fadeOut(3000);
     }
 
-    $(".product-remove").click(function (e) {
-        e.preventDefault();
-        var ele = $(this);
-        Swal.fire({
-            title: "Remove Item",
-            text: "Are you sure you want to remove this item?",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Remove",
-            cancelButtonText: "Cancel",
-            customClass: {
-                popup: 'swal-large',
-                title: 'swal-large swal-title',
-                content: 'swal-large swal-text',
+    // Add JavaScript or jQuery code here to handle hover events and show/hide submenus
+    $(document).ready(function() {
+        $('.menu-item-has-children').hover(
+            function() {
+                $(this).find('.submenu').css('display', 'block');
+            },
+            function() {
+                $(this).find('.submenu').css('display', 'none');
             }
-            })
-            .then((willDelete) => {
-                        if (willDelete) {
-                            $.get("{{ route('RemoveFromCart') }}", {
-                                _token : '{{ csrf_token() }}',
-                                id : ele.parents("li").attr("data-id")
-                            }, function(res) {
-                                if (res['success']) {
-                                    Swal.fire({
-                                        title: "Successful...",
-                                        text: res.message,
-                                        icon: "success",
-                                        customClass: {
-                                            popup: 'swal-large', // Apply the custom class to the modal
-                                            title: 'swal-large swal-title', // Apply the custom class to the title
-                                            content: 'swal-large swal-text', // Apply the custom class to the text content
-                                        }
-                                    })
-                                    location.reload();
-                                }
-                            });
-                        }
-                    });
+        );
+
+        // Optionally, you can add similar hover handling for grandchild submenus
+        $('.menu-item-has-grandchildren').hover(
+            function() {
+                $(this).find('.submenu').css('display', 'block');
+            },
+            function() {
+                $(this).find('.submenu').css('display', 'none');
+            }
+        );
     });
 
 </script>

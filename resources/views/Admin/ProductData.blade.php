@@ -371,7 +371,8 @@
                 if (data.success == true) {
                     // alert(data);
                     swal("Success!", data.message, "success");
-                    window.location.href = '{{ route('ProductData', ['id' => $id]) }}'
+
+                    // window.location.href = '{{ route('ProductData', ['id' => $id]) }}'
                 }else{
                     // alert("kk")
                     swal("Error!", data.message, "warning");

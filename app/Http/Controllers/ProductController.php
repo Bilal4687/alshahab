@@ -4,12 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    public function GetChildrenCategory(Request $req)
+    {
+        $subcategories = DB::table('categories')->where('parent_id', $req->input('parentCategoryId'))->get();
+        // Retur    n subcategories as JSON
+        return response()->json($subcategories);
+    }
     function Product()
     {
         return view('Admin.Product');
@@ -31,9 +37,11 @@ class ProductController extends Controller
             ->select('products__attributes.*', 'products__variations.*', 'attributes.*')
             ->leftJoin('products__variations', 'products__variations.product_variation_id', '=', 'products__attributes.variation_id')
             ->leftJoin('attributes', 'attributes.attribute_id', '=', 'products__attributes.attribute_id')
-            ->where('products__attributes.product_id', 1)
+            ->where('products__attributes.product_id', $id)
             ->get();
 
+            // dd($attributesData);
+            // return false;
 
         $product = DB::table('products')->where('product_id', $id)->get();
         $variation = DB::table('variations')->get();
@@ -58,13 +66,18 @@ class ProductController extends Controller
     {
         $id = $req->input('product_id');
         $data = $req->input();
-        $data['product_slug'] = str_replace(" ", "_", $data['product_name']);
+
+        if (array_key_exists('category', $data)) {
+            unset($data['category']);
+        }
+
+        $data['product_slug'] = str_replace(" ", "-", strtolower($data['product_name']));
         $folder = 'public/Files/Products/';
         unset($data['_token']);
         $validator = Validator::make($req->all(), [
             'product_name' =>  'required',
             'brand_id' =>  'required',
-            'product_description' => 'required|min:3|max:1000',
+            'product_description' => 'required|min:3',
             'product_thumbnail' => $id ? 'mimes:jpeg,jpg,png|max:2048' : 'required|image|mimes:jpeg,jpg,png|max:2048'
         ]);
 

@@ -5,21 +5,54 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
     public function Category()
     {
-        $Category_data = DB::table('categories')->get();
+        $Category_data = DB::table('categories')->where('parent_id', 0)->get();
         return view('Admin.Category', ['data' => $Category_data]);
     }
     public function CategoryShow()
     {
 
-        $CategoryData = DB::table('categories')->get();
+        $CategoryData = DB::table('categories')->where('parent_id', 0)->get();
+
         return response()->json($CategoryData);
     }
+    public function SubCategoryShow($categoryId)
+    {
+        $subCategoryData = DB::table('categories')->where('parent_id', $categoryId)->get();
+
+        // return view('Admin.Category', compact('subCategoryData'));
+
+        return response()->json($subCategoryData);
+    }
+    public function SubCategoryShowMore($categoryId)
+    {
+        $subCategoryData = DB::table('categories')->where('parent_id', $categoryId)->get();
+        // dd($subCategoryData);
+
+        return response()->json($subCategoryData);
+    }
+
+    // public function fetchSubCategory($slug)
+    // {
+    //     $subCategories = DB::table('categories')->where('parent_id', function($query) use ($slug) {
+    //         $query->select('category_id')->from('categories')->where('slug', $slug);
+    //     })->get();
+
+    //     return response()->json($subCategories);
+    // }
+
+    // public function CategoryShow()
+    // {
+
+    //     $CategoryData = DB::table('categories')->get();
+
+    //     return response()->json($CategoryData);
+    // }
 
     public function CategoryStore(Request $req)
     {

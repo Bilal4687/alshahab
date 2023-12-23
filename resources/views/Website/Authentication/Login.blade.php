@@ -20,14 +20,18 @@
 			<div class="row">
 				<div class="content-area col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="site-main">
-						<h3 class="header-message">
-							Discover Your Fragrance Journey Today!
-						</h3>
+                        <h3 class="header-message" style="text-align: center">
+                            Discover Your Fragrance Journey Today!
+                        </h3>
 						<div class="customer_login">
 							<div class="row">
-								<div class="col-lg-6 col-md-6 col-sm-12">
+                                <div class="col-md-3">
+
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+
 									<div class="login-item">
-										<h5 class="title-login">Login your Account</h5>
+										<h5 class="title-login">Login Please enter your e-mail and password                                        </h5>
 										<form class="login" id="CustomerLogin">
                                               @csrf
 											<p class="form-row form-row-wide">
@@ -49,7 +53,7 @@
 											</p>
 											<p class="form-row">
 												<button type="button" id="LoginBtn" name="LoginBtn" onclick="CustomerLogin()" class="button-submit">Login</button>
-                                                <div id="show_error" class="" style="display:none;"></div>
+                                                <div id="error" style="display: none"></div>
                                             </p>
 											<p class="form-row">
                                                <a href="{{ url('Signup') }}">New to Guessmyscent? Create an account</a>
@@ -57,6 +61,9 @@
 										</form>
 									</div>
 								</div>
+                                <div class="col-md-3">
+
+                                </div>
 
 							</div>
 						</div>
@@ -73,11 +80,15 @@
     <script>
 
 
-        function alertmsg(msg, type) {
-            $("#show_error").removeClass().html('').show();
-            $("#show_error").addClass(`alert alert-${type} text-center`).html(msg);
-            $("#show_error").fadeOut(2000);
-        }
+            function alertmsg(msg, type) {
+    $("#error").removeClass().html('').show();
+    $("#error").addClass(`alert alert-${type} text-center`).html(msg);
+    $("#error").fadeOut(3000);
+}
+
+
+
+
         function CustomerLogin() {
             $('#LoginBtn').prop("disabled", true);
 
@@ -85,9 +96,9 @@
                 .done((res) => {
                     if (res.success) {
                         alertmsg(res.message, "success");
-                            window.location.href = "{{ url('/') }}";
-                    } else if (res.validation) {
-                        alertmsg(res.message[0], "warning")
+                            window.location.href = "{{ url('/OrderConfirm') }}";
+                    } else if (res.validate) {
+                        alertmsg(res.message, "warning")
                     } else {
                         alertmsg(res.message, "danger")
                     }

@@ -1,6 +1,7 @@
 @extends('Admin.AdminLayout')
+
 @section('content')
-<div class="container-fluid">
+    <div class="container-fluid">
         <!-- Page Heading -->
         <div class="row">
             <div class="col-lg-12 my-2">
@@ -27,9 +28,7 @@
                         <thead>
                             <tr>
                                 <th>Category Id</th>
-                                <th>Sub Category Name</th>
                                 <th>Category Name</th>
-                                <th>Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -52,20 +51,20 @@
                 <div class="modal-body">
                     <form id="CategoryStoreForm">
                         @csrf
-                        <input type="text" style="display: none" id="categories_sub_id" name="categories_sub_id">
+                        <input type="text" style="display: none" id="category_id" name="category_id">
                         <div class="form-group">
-                            <label>Category Name</label>
-                            <input type="text" class="form-control form-control-user required " name="categories_sub_name"
-                                id="categories_sub_name" placeholder="Enter Category">
-                        </div>
-                          <div class="form-group">
-                            <label>Select Category</label>
-                            <select name="category_id" id="category_id" class="form-control form-control-user">
+                            <label>Parent Category</label>
+                            <select name="parent_id" id="parent_id" class="form-control form-control-user">
                                 <option selected disabled>Select Category</option>
-                            @foreach ($categories as $item)
+                            @foreach ($data as $item)
                             <option value="{{ $item->category_id}}">{{ $item->category_name}}</option>
                             @endforeach
                         </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Category Name</label>
+                            <input type="text" class="form-control form-control-user required " name="category_name"
+                                id="category_name" placeholder="Enter Category">
                         </div>
                     </form>
                 </div>
@@ -74,91 +73,73 @@
                 <div class="modal-footer">
                     <span id="error" style="display: none;" class="m-auto"></span>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" id="btnSubmit" onclick="CategorySubStore()" class="btn btn-primary">Submit</button>
+                    <button type="button" id="btnSubmit" onclick="CategoryStore()" class="btn btn-primary">Submit</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        $(function(){
-            Getdata()
+
+        $(function() {
+            GetDataTable("#DataTable", "{{ route('CategoryShow') }}",
+            [{
+                data: 'category_id'
+            }, {
+                data: 'category_name'
+            }, {
+                data: 'category_id',
+                render: (id) => {
+                    return `<button class="btn btn-primary mx-1" onclick="CategoryEdit('${id}')" ><i class="fa fa-edit"></i></button><button class="btn btn-danger mx-1" onclick="CategoryRemove('${id}')"><i class="fa fa-trash"></i></button>`;
+                }
+            }], )
         });
 
-        function Getdata(){
-            var Datatable = $('#DataTable').DataTable({
-                dom: '<"top"<"left-col"B><"right-col"f>>r<"table table-striped"t>ip',
-                lengthMenu: [
-                    [10, 25, 50, -1],
-                    ['10 rows', '25 rows', '50 rows', 'Show all']
-                ],
-                "responsive": true,
-                buttons: [
-                    'pageLength'
-                ],
-                ajax: {
-                    url: "{{ route('CategorySubFetch') }}",
-                    dataSrc: '',
-                },
-                columns: [{
-                        data: 'categories_sub_id',
-                    },
-                    {
-                        data: 'categories_sub_name',
-                    },
-                    {
-                        data: 'category_name',
-                    },
-                    {
-                        data: 'created_date',
-                    },
-                    {
-                        data: 'categories_sub_id',
-                        render: (categories_sub_id) => {
-                                return `<button class="btn btn-primary mx-1" data-toggle="modal" data-target="#Blog_modal" onclick="SubCategoryEdit('${categories_sub_id}')" ><i class="fa fa-edit"></i></button><button class="btn btn-danger mx-1" onclick="SubCategoryRemove('${categories_sub_id}')"><i class="fa fa-trash"></i></button>`;
-                            }
-                    }
 
-                ]
-            })
-        }
-
-        function CategorySubStore() {
+        function CategoryStore() {
             $("#btnSubmit").prop("disabled", true);
-            $.post("{{route('CategorySubStore')}}", $('#CategoryStoreForm').serialize())
+            $.post("{{ route('CategoryStore') }}", $('#CategoryStoreForm').serialize())
                 .done((res) => {
                     if (res.success) {
-                         alertmsg(res.message, "success");
-                        DataTable.ajax.reload();
+                        alertmsg(res.message, "success");
                         $('#CategoryStoreForm')[0].reset();
+                        DataTable.ajax.reload();
                         $("#CategoryStoreModal").modal('hide');
-                    }else if (res.validate) {
+                        location.reload();
+                    } else if (res.validate) {
                         alertmsg(res.message, "warning")
                     } else {
                         alertmsg(res.message, "danger")
                     }
-                });
-                $("#btnSubmit").prop("disabled", false);
+                })
+                    $("#btnSubmit").prop("disabled", false); // Enable the button regardless of success or failure
+
         }
 
-        function SubCategoryEdit(id){
+
+        function CategoryEdit(category_id) {
             $('#CategoryStoreForm')[0].reset();
             $('#CategoryStoreModal').modal('show');
-            $.get("{{ route('CategorySubEdit') }}", {
-                categories_sub_id: id
+            $.get("{{ route('CategoryEdit') }}", {
+                category_id: category_id
             }, (data)=>{
                 filledit(data.data[0])
             });
         }
 
-        function SubCategoryRemove(id){
+        function CategoryRemove(category_id) {
             confirmdlt(() => {
-                $.get("{{ route('SubCategoryDelete') }}", {categories_sub_id: id},
+                $.get("{{ route('CategoryRemove') }}", {category_id: category_id},
                     (res) => {
                         swal({title: "Successful...", text: res.message, icon: "success"})
                         DataTable.ajax.reload();
                     });
             })
         }
+
+
+        $('#CategoryStoreModal').on('hidden.bs.modal', function () {
+            $('#CategoryStoreForm')[0].reset();
+        });
     </script>
 @endsection

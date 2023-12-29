@@ -9,26 +9,63 @@ use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
-    public function Category()
+    // public function Category(Request $req, $categoryId = null)
+    // {
+    //     if($categoryId !== null){
+    //         $Category_data = DB::table('categories')->where('parent_id', $categoryId)->get();
+    //     }else{
+    //         $Category_data = DB::table('categories')->where('parent_id', 0)->get();
+    //    }
+    //     return view('Admin.Category', ['data' => $Category_data]);
+    // }
+    public function Category(Request $req, $categoryId = null)
     {
-        $Category_data = DB::table('categories')->where('parent_id', 0)->get();
-        return view('Admin.Category', ['data' => $Category_data]);
+        $parentCategoryData = DB::table('categories')->where('parent_id', 0)->get();
+        $SelectedCategory = DB::table('categories')->where('category_id', $categoryId)->get();
+
+        $subCategoryData = null;
+        if ($categoryId !== null) {
+            $subCategoryData = DB::table('categories')->where('parent_id', $categoryId)->get();
+        }
+        // dd('data', compact('parentCategoryData', 'subCategoryData'));
+        return view('Admin.Category', [
+            'parentData' => $parentCategoryData,
+            'subData' => $subCategoryData,
+            'SelectedCategory' => $SelectedCategory
+        ]);
     }
-    public function CategoryShow()
+
+    public function CategoryShow(Request $req, $categoryId = null)
     {
-
-        $CategoryData = DB::table('categories')->where('parent_id', 0)->get();
-
-        return response()->json($CategoryData);
+        // dd($categoryId);
+        if ($categoryId !== null) {
+            // Fetch subcategories when a category ID is provided
+            $subCategoryData = DB::table('categories')->where('parent_id', $categoryId)->get();
+            // dd('sub',$subCategoryData);
+            return response()->json($subCategoryData);
+        } else {
+            // Fetch parent categories when no category ID is provided
+            $CategoryData = DB::table('categories')->where('parent_id', 0)->get();
+            // dd('par',$CategoryData);
+            return response()->json($CategoryData);
+        }
     }
-    public function SubCategoryShow($categoryId)
-    {
-        $subCategoryData = DB::table('categories')->where('parent_id', $categoryId)->get();
 
-        // return view('Admin.Category', compact('subCategoryData'));
+    // public function CategoryShow(Request $req)
+    // {
+    //     // dd($req);
+    //     $CategoryData = DB::table('categories')->where('parent_id', 0)->get();
 
-        return response()->json($subCategoryData);
-    }
+    //     return response()->json($CategoryData);
+    // }
+    // public function SubCategoryShow($categoryId)
+    // {
+    //     $subCategoryData = DB::table('categories')->where('parent_id', $categoryId)->get();
+
+    //     // return view('Admin.Category', compact('subCategoryData'));
+
+    //     return response()->json($subCategoryData);
+    // }
     public function SubCategoryShowMore($categoryId)
     {
         $subCategoryData = DB::table('categories')->where('parent_id', $categoryId)->get();

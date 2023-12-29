@@ -10,11 +10,13 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">Category</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                <a href="{{ route('Category') }}" style="color: black">Category</a>
+                            </div>
                         </div>
                         <div class="col-auto">
                             <button type="button" class="btn btn-primary" data-toggle="modal"
-                                data-target="#CategoryStoreModal" id="AddBtn">Add</button>
+                                data-target="#CategoryStoreModal" id="AddBtn" onclick="ClearFormFields()">Add</button>
                         </div>
                     </div>
                 </div>
@@ -50,24 +52,31 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <!-- Modal body -->
+
+
             <div class="modal-body">
                 <form id="CategoryStoreForm">
                     @csrf
-                    <input type="text" style="display: none" id="category_id" name="category_id">
-                    {{-- <div class="form-group">
-                        <label>Parent Category</label>
-                        <select name="parent_id" id="parent_id" class="form-control form-control-user">
-                            <option selected disabled>Select Category</option>
-                            @foreach ($data as $item)
-                            <option value="{{ $item->category_id}}">{{ $item->category_name}}</option>
-                            @endforeach
-                        </select>
-                    </div> --}}
+                    @if(isset($subData))
+                        <div class="form-group">
+                            <label>Parent Category</label>
+                            <select name="parent_id" id="parent_id" class="form-control form-control-user" disabled>
+                                 <option value="{{ $SelectedCategory[0]->category_name }}" selected>{{ $SelectedCategory[0]->category_name }}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Category Name</label>
+                            <input type="text" class="form-control form-control-user required " name="category_name"
+                                id="category_name" placeholder="Enter Category">
+                        </div>
+                    @else
+
                     <div class="form-group">
                         <label>Category Name</label>
-                        <input type="text" class="form-control form-control-user required " name="category_name"
-                            id="category_name" placeholder="Enter Category">
+                        <input type="text" class="form-control form-control-user required " name="category_name" id="category_name" placeholder="Enter Category">
                     </div>
+                    @endif
+
                 </form>
             </div>
 
@@ -81,11 +90,27 @@
     </div>
 </div>
 <script>
-// Declare dataTable in a higher scope
+    // Declare dataTable in a higher scope
 let dataTable;
 
+function ClearFormFields(){
+    $("#CategoryStoreForm")[0].reset();
+}
+
 $(document).ready(function() {
-    // Initialize an empty DataTable
+
+    initializeDataTable();
+
+    const currentCategoryId = getCategoryFromUrl();
+    console.log('currentCategoryId', currentCategoryId);
+    if (currentCategoryId) {
+        fetchAndLoadData(currentCategoryId);
+    } else {
+        fetchAndLoadData();
+    }
+});
+
+function initializeDataTable() {
     dataTable = $("#DataTable").DataTable({
         columns: [
             {
@@ -93,9 +118,9 @@ $(document).ready(function() {
             },
             {
                 data: 'category_id',
-                render: (id, type, row) => {
+                render: function(data, type, row) {
                     return `
-                        <button class="btn btn-primary mx-1" onclick="FetchSubCategory('${id}')">
+                        <button class="btn btn-primary mx-1" onclick="FetchSubCategory('${data}')">
                             Sub Category
                         </button>
                     `;
@@ -103,19 +128,37 @@ $(document).ready(function() {
             }
         ]
     });
+}
 
-    // Fetch initial data
-    fetchAndLoadData();
-});
+function getCategoryFromUrl() {
 
-function fetchAndLoadData() {
+    const urlParts = window.location.href.split('/');
+
+    const categoryIdIndex = urlParts.indexOf('Category') + 1;
+
+    if (categoryIdIndex < urlParts.length) {
+        return urlParts[categoryIdIndex];
+    }
+
+    return null;
+}
+
+function fetchAndLoadData(categoryId = null) {
+
+    const url = categoryId ? `{{ route('CategoryShow') }}/${categoryId}` : "{{ route('CategoryShow') }}";
+
     $.ajax({
         type: "GET",
-        url: "{{ route('CategoryShow') }}",
+        url: url,
         dataType: "json",
         success: function(data) {
-            // Update DataTable with the fetched data
+            if (dataTable) {
+                dataTable.destroy();
+            }
+
+            initializeDataTable();
             dataTable.clear().rows.add(data).draw();
+
         },
         error: function(error) {
             console.log('Error fetching data: ', error);
@@ -124,24 +167,32 @@ function fetchAndLoadData() {
 }
 
 function FetchSubCategory(categoryId) {
-    const url = `{{ route('Category') }}/${categoryId}`;
 
-
-    $.ajax({
-        type: "GET",
-        url: url,
-        success: function (data) {
-            // Update DataTable with the fetched subcategories
-            dataTable.clear().rows.add(data).draw();
-
-            // Change the browser URL
-            window.history.pushState({categoryId: categoryId}, null, `/alshahab/Admin/Category/${categoryId}`);
-        },
-        error: function (error) {
-            console.log('Error fetching categories and subcategories: ', error);
-        }
-    });
+    fetchAndLoadData(categoryId);
+    window.history.pushState({categoryId: categoryId}, null, `/alshahab/Admin/Category/${categoryId}`);
 }
+
+
+function CategoryStore() {
+            $("#btnSubmit").prop("disabled", true);
+            $.post("{{ route('CategoryStore') }}", $('#CategoryStoreForm').serialize())
+                .done((res) => {
+                    if (res.success) {
+                        alertmsg(res.message, "success");
+                        $('#CategoryStoreForm')[0].reset();
+                        DataTable.ajax.reload();
+                        $("#CategoryStoreModal").modal('hide');
+                        location.reload();
+                    } else if (res.validate) {
+                        alertmsg(res.message, "warning")
+                    } else {
+                        alertmsg(res.message, "danger")
+                    }
+                })
+                    $("#btnSubmit").prop("disabled", false); // Enable the button regardless of success or failure
+
+        }
+
 
 </script>
 @endsection

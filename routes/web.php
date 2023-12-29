@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+
 
 // AdminPanel Controllers
 use App\Http\Controllers\AuthController;
@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 //Middlewares
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CustomerMiddleware;
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -144,14 +145,12 @@ Route::group(['prefix' => 'Admin', 'middleware' => 'AdminMiddleware'], function 
 
     //Category Routes
 
+    Route::get('Category/{categoryId?}', [CategoryController::class, 'Category'])->name('Category');
+    Route::get('CategoryShow/{categoryId?}', [CategoryController::class, 'CategoryShow'])->name('CategoryShow');
     Route::post('CategoryStore', [CategoryController::class, 'CategoryStore'])->name('CategoryStore');
-    Route::get('CategoryShow', [CategoryController::class, 'CategoryShow'])->name('CategoryShow');
     Route::get('CategoryEdit', [CategoryController::class, 'CategoryEdit'])->name('CategoryEdit');
     // routes/web.php
     // Route::get('FetchSubCategory/{slug}', [CategoryController::class, 'fetchSubCategory'])->name('FetchSubCategory');
-    Route::get('Category', [CategoryController::class, 'Category'])->name('Category');
-    Route::get('Category/{categoryId}', [CategoryController::class, 'SubCategoryShow'])->name('SubCategoryShow');
-    // Route::get('subcategories/{categoryId}', [CategoryController::class, 'SubCategoryShow'])->name('SubCategoryShow');
 
     Route::get('CategoryRemove', [CategoryController::class, 'CategoryRemove'])->name('CategoryRemove');
 
